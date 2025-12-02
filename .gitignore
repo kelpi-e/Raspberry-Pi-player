@@ -1,0 +1,22 @@
+# Файлы сборки и артефакты
+cmake-build-*/
+build/
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Файлы IDE JetBrains
+.idea/*
+!.idea/vcs.xml
+!.idea/untitled3.iml
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
