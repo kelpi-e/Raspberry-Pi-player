@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
-    <height>320</height>
+    <width>320</width>
+    <height>240</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="vLay">
