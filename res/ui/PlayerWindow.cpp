@@ -1,0 +1,115 @@
+#include "PlayerWindow.h"
+
+PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
+    : QWidget(parent), audio(audio)
+{
+    ui.setupUi(this);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setFixedSize(WIDTH, HEIGHT);
+
+    progressBar = ui.pb;
+
+    connect(audio->getPlayer(),
+            &QMediaPlayer::mediaStatusChanged,
+            this,
+            [this, audio](QMediaPlayer::MediaStatus s){
+        if(s == QMediaPlayer::LoadedMedia || s == QMediaPlayer::BufferedMedia)
+        {
+            QString title = audio->getTitle(audio->getCurrentlyPlaying());
+            if(title.isEmpty())
+                title = "no title";
+            ui.lblTitle->setText(title);
+
+            QString artist = audio->getArtist(audio->getCurrentlyPlaying());
+            if(artist.isEmpty())
+                artist = "unknown";
+            artist = "by " + artist;
+            ui.lblArtist->setText(artist);
+        }
+    });
+
+
+    connect(ui.btnPlay, &QPushButton::clicked, this, [this]() {
+        if (!this->audio) return;
+        if (this->audio->isPlaying()) {
+            this->audio->pause();
+            ui.btnPlay->setText("Play");
+        } else {
+            this->audio->play(CurrentFile);
+            ui.btnPlay->setText("Pause");
+        }
+    });
+
+    connect(ui.btnPrev, &QPushButton::clicked, this, [this]() {
+        backwardRewind(5);
+    });
+
+    connect(ui.btnNext, &QPushButton::clicked, this, [this]() {
+        forwardRewind(5);
+    });
+    connect(audio->getPlayer(), &QMediaPlayer::positionChanged,
+            this, &PlayerWindow::updateProgressBar);
+
+    connect(audio->getPlayer(), &QMediaPlayer::durationChanged,
+            this, &PlayerWindow::updateProgressRange);
+    connect(audio->getPlayer(), &QMediaPlayer::metaDataChanged,
+        this, &PlayerWindow::updateCover);
+
+
+}
+void PlayerWindow::updateProgressBar(qint64 pos) {
+    progressBar->setValue(pos);
+}
+void PlayerWindow::updateProgressRange(qint64 dur) {
+    progressBar->setRange(0, dur);
+}
+
+
+QString PlayerWindow::getcurrentPath() { return CurrentFile;}
+
+QString PlayerWindow::setCurrentFile(const QString &path) {
+    CurrentFile = path;
+    return {};
+}
+
+void PlayerWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Escape) close();
+}
+
+void PlayerWindow::forwardRewind(const qint64 dt) {
+    const qint64 value = progressBar->value();
+    const qint64 maximum = progressBar->maximum();
+    progressBar->setValue(value + dt < maximum ? value + dt : maximum);
+    audio->forwardRewind(dt);
+}
+
+void PlayerWindow::backwardRewind(const qint64 dt) {
+    const qint64 value = progressBar->value();
+    const qint64 minimum = progressBar->minimum();
+    progressBar->setValue(value - dt  < minimum ? minimum : value - dt);
+    audio->backwardRewind(dt);
+}
+void PlayerWindow::updateCover() {
+    const QMediaMetaData md = audio->getPlayer()->metaData();
+
+    QVariant thumb = md.value(QMediaMetaData::ThumbnailImage);
+    if (!thumb.isNull()) {
+        QImage img = thumb.value<QImage>();
+        ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
+            250, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation
+        ));
+        return;
+    }
+
+    QVariant cover = md.value(QMediaMetaData::CoverArtImage);
+    if (!cover.isNull()) {
+        QImage img = cover.value<QImage>();
+        ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
+            250, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation
+        ));
+        return;
+    }
+
+    ui.lblCover->setPixmap(QPixmap());
+    ui.lblCover->setText("Нет обложки");
+}

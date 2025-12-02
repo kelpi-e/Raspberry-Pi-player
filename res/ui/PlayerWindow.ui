@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlayerWindow</class>
+ <widget class="QWidget" name="PlayerWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>240</width>
+    <height>320</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="vLay">
+
+   <item>
+    <widget class="QLabel" name="lblCover">
+     <property name="minimumSize">
+      <size>
+       <width>150</width>
+       <height>150</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="text">
+      <string>Обложка</string>
+     </property>
+    </widget>
+   </item>
+
+
+   <item>
+    <widget class="QLabel" name="lblTitle">
+     <property name="text">
+      <string>Название трека</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QLabel" name="lblArtist">
+     <property name="text">
+      <string>Исполнитель</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QProgressBar" name="pb"/>
+   </item>
+
+   <item>
+    <layout class="QHBoxLayout" name="hLay">
+     <item>
+      <widget class="QPushButton" name="btnPrev">
+       <property name="text"><string>⏮</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnPlay">
+       <property name="text"><string>Play</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnNext">
+       <property name="text"><string>⏭</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

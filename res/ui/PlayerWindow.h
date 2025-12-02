@@ -1,0 +1,33 @@
+#pragma once
+#include "../pch.h"
+#include "../audio/PlayerAudio.h"
+#include "ui_PlayerWindow.h"
+
+class PlayerWindow : public QWidget {
+    Q_OBJECT
+
+public:
+    explicit PlayerWindow(QWidget *parent = nullptr, PlayerAudio *audio = nullptr);
+    QString getcurrentPath();
+    QString setCurrentFile(const QString &path);
+
+    void forwardRewind(qint64 dt);
+    void backwardRewind(qint64 dt);
+
+    void updateCover();
+
+    void updateProgressBar (qint64 pos);
+
+    void updateProgressRange(qint64 dur);
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
+private:
+    Ui::PlayerWindow ui{};
+    QProgressBar *progressBar{};
+    QLabel *timeLabel{};
+    QTimer *timer{};
+    PlayerAudio *audio{};
+    QString CurrentFile;
+};
