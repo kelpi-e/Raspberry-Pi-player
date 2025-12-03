@@ -76,6 +76,8 @@ QString PlayerWindow::setCurrentFile(const QString &path) {
 }
 
 void PlayerWindow::keyPressEvent(QKeyEvent *event) {
+    std::printf("\033[?25h");
+    std::fflush(stdout);
     if (event->key() == Qt::Key_Escape) {
         emit requestClose();
         close();

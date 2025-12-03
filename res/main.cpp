@@ -4,8 +4,13 @@
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
 #include <QMainWindow>
-
+void hideCursor() {
+    std::printf("\033[?25l");
+    std::fflush(stdout);
+}
 int main(int argc, char *argv[]) {
+
+    hideCursor();
     QApplication app(argc, argv);
 
     const QString fileName =
@@ -40,7 +45,7 @@ int main(int argc, char *argv[]) {
     win.resize(proxy->sceneBoundingRect().size().toSize());
     win.show();
 
-    audio.play(fileName);
+    //audio.play(fileName);
 
     return QApplication::exec();
 }
