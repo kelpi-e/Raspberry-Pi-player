@@ -1,5 +1,7 @@
 #include "PlayerWindow.h"
 
+#include <QMainWindow>
+
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     : QWidget(parent), audio(audio)
 {
@@ -56,6 +58,7 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
         this, &PlayerWindow::updateCover);
 
 
+
 }
 void PlayerWindow::updateProgressBar(qint64 pos) {
     progressBar->setValue(pos);
@@ -73,7 +76,10 @@ QString PlayerWindow::setCurrentFile(const QString &path) {
 }
 
 void PlayerWindow::keyPressEvent(QKeyEvent *event) {
-    if (event->key() == Qt::Key_Escape) close();
+    if (event->key() == Qt::Key_Escape) {
+        emit requestClose();
+        close();
+    }
 }
 
 void PlayerWindow::forwardRewind(const qint64 dt) {

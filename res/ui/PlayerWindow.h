@@ -6,6 +6,9 @@
 class PlayerWindow : public QWidget {
     Q_OBJECT
 
+    signals:
+        void requestClose();
+
 public:
     explicit PlayerWindow(QWidget *parent = nullptr, PlayerAudio *audio = nullptr);
     QString getcurrentPath();
@@ -30,4 +33,5 @@ private:
     QTimer *timer{};
     PlayerAudio *audio{};
     QString CurrentFile;
+
 };

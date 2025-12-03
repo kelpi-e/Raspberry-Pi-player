@@ -31,9 +31,3 @@ target_link_libraries(untitled3
         Qt6::Multimedia
         tag
 )
-
-# Sanitizer (по желанию)
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    target_compile_options(untitled3 PRIVATE -fsanitize=address -fno-omit-frame-pointer)
-    target_link_options(untitled3 PRIVATE -fsanitize=address)
-endif()
