@@ -31,13 +31,13 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     });
 
 
-    connect(ui.btnPlay, &QPushButton::clicked, this, [this]() {
+    connect(ui.btnPlay, &QPushButton::clicked, this, [this, audio]() {
         if (!this->audio) return;
         if (this->audio->isPlaying()) {
             this->audio->pause();
             ui.btnPlay->setText("Play");
         } else {
-            this->audio->play(CurrentFile);
+            this->audio->play(audio->getCurrentMediaType(),  audio->getCurrentlyPlaying());
             ui.btnPlay->setText("Pause");
         }
     });
@@ -68,16 +68,7 @@ void PlayerWindow::updateProgressRange(qint64 dur) {
 }
 
 
-QString PlayerWindow::getcurrentPath() { return CurrentFile;}
-
-QString PlayerWindow::setCurrentFile(const QString &path) {
-    CurrentFile = path;
-    return {};
-}
-
 void PlayerWindow::keyPressEvent(QKeyEvent *event) {
-    std::printf("\033[?25h");
-    std::fflush(stdout);
     if (event->key() == Qt::Key_Escape) {
         emit requestClose();
         close();
@@ -102,7 +93,7 @@ void PlayerWindow::updateCover() {
 
     QVariant thumb = md.value(QMediaMetaData::ThumbnailImage);
     if (!thumb.isNull()) {
-        QImage img = thumb.value<QImage>();
+        auto img = thumb.value<QImage>();
         ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
             250, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation
         ));
@@ -120,4 +111,8 @@ void PlayerWindow::updateCover() {
 
     ui.lblCover->setPixmap(QPixmap());
     ui.lblCover->setText("Нет обложки");
+}
+
+PlayerAudio* PlayerWindow::getAudio() {
+    return audio;
 }

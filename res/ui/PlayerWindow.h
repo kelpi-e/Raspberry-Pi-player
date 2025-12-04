@@ -5,19 +5,17 @@
 
 class PlayerWindow : public QWidget {
     Q_OBJECT
-
     signals:
-        void requestClose();
+    void requestClose();
 
 public:
     explicit PlayerWindow(QWidget *parent = nullptr, PlayerAudio *audio = nullptr);
-    QString getcurrentPath();
-    QString setCurrentFile(const QString &path);
-
     void forwardRewind(qint64 dt);
     void backwardRewind(qint64 dt);
 
     void updateCover();
+
+    PlayerAudio *getAudio();
 
     void updateProgressBar (qint64 pos);
 
@@ -32,6 +30,5 @@ private:
     QLabel *timeLabel{};
     QTimer *timer{};
     PlayerAudio *audio{};
-    QString CurrentFile;
 
 };

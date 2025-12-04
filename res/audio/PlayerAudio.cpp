@@ -1,4 +1,7 @@
 #include "PlayerAudio.h"
+#include <QProcess>
+
+#include "mediastategy.h"
 
 PlayerAudio::PlayerAudio(QObject *parent)
     : QObject(parent)
@@ -8,12 +11,37 @@ PlayerAudio::PlayerAudio(QObject *parent)
     player->setAudioOutput(out);
 }
 
-void PlayerAudio::play(const QString &path) {
-    player->setSource(QUrl::fromLocalFile(path));
+
+void PlayerAudio::play(MediaType type, const QString &input)
+{
+    qDebug() << "[DEBUG] Play called with type:" << static_cast<int>(type) << ", input:" << input;
+
+    std::unique_ptr<MediaStrategy> s(MediaFactory::create(type));
+    if (!s) {
+        qDebug() << "[ERROR] Failed to create MediaStrategy!";
+        return;
+    }
+
+    qDebug() << "[DEBUG] MediaStrategy created:" << typeid(*s).name();
+
+    const QString url = s->resolve(input);
+    qDebug() << "[DEBUG] Resolved URL:" << url;
+
+    if (url.isEmpty()) {
+        qDebug() << "[ERROR] Resolved URL is empty!";
+        return;
+    }
+
+    player->setSource(QUrl(url));
+    qDebug() << "[DEBUG] QMediaPlayer source set";
+
     out->setVolume(VOLUME);
     player->setPosition(currentPosition);
-    setCurrentlyPlaying(path);
+    qDebug() << "[DEBUG] Volume set to" << VOLUME << ", position set to" << currentPosition;
+
+    setCurrentlyPlaying(input);
     player->play();
+    qDebug() << "[DEBUG] Player started";
 }
 
 void PlayerAudio::setCurrentPosition(const qint64 position) { currentPosition = position;}
@@ -64,9 +92,18 @@ QString PlayerAudio::getArtist(const QString &path) {
 
 QMediaPlayer* PlayerAudio::getPlayer() const { return player; }
 
-void PlayerAudio::setCurrentlyPlaying(const QString &path) {currentlyPlaying = path;}
+void PlayerAudio::setCurrentlyPlaying (const QString &str) {
+    currentlyPlaying = str;
+}
 
-QString PlayerAudio::getCurrentlyPlaying() const {return currentlyPlaying;}
+QString PlayerAudio::getCurrentlyPlaying() const {
+    return currentlyPlaying;
+}
 
+void PlayerAudio::setCurrentMediaType(const MediaType type) {
+    currentMediaType = type;
+}
 
-
+MediaType PlayerAudio::getCurrentMediaType () {
+    return currentMediaType;
+}

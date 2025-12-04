@@ -1,11 +1,15 @@
 #pragma once
+#include "mediafactory.h"
 #include "../pch.h"
 
 class PlayerAudio : public QObject {
     Q_OBJECT
 public:
     explicit PlayerAudio(QObject *parent = nullptr);
-    void play(const QString &path);
+
+    void play(MediaType type, const QString &input);
+
+
     void setCurrentPosition(qint64 position);
     void pause();
     void forwardRewind(qint64 dt) const;
@@ -18,9 +22,13 @@ public:
     QString getArtist(const QString &path);
 
 
-    void setCurrentlyPlaying(const QString &path);
+    void setCurrentlyPlaying(const QString &str);
 
     QString getCurrentlyPlaying() const;
+
+    void setCurrentMediaType(MediaType type);
+
+    MediaType getCurrentMediaType();
 
     QMediaPlayer* getPlayer () const;
 
@@ -29,5 +37,5 @@ private:
     QAudioOutput *out{};
     qint64 currentPosition = 0;
     QString currentlyPlaying = "";
-
+    MediaType currentMediaType{};
 };

@@ -4,23 +4,20 @@
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
 #include <QMainWindow>
-void hideCursor() {
-    std::printf("\033[?25l");
-    std::fflush(stdout);
-}
+
 int main(int argc, char *argv[]) {
 
-    hideCursor();
     QApplication app(argc, argv);
 
-    const QString fileName =
-        QCoreApplication::applicationDirPath() + "/../res/music/1.mp3";
+    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
+    const QString url = "https://youtu.be/mzfizVNCNbc?si=9kk4jxifKGRWeL9N";
 
     PlayerAudio audio;
 
     // Создаём PlayerWindow
     auto* player = new PlayerWindow(nullptr, &audio);
-    player->setCurrentFile(fileName);
+    player->getAudio()->setCurrentlyPlaying(url);
+    player->getAudio()->setCurrentMediaType(MediaType::Youtube);
 
     // Сцена
     QGraphicsScene scene;
@@ -45,7 +42,7 @@ int main(int argc, char *argv[]) {
     win.resize(proxy->sceneBoundingRect().size().toSize());
     win.show();
 
-    //audio.play(fileName);
+
 
     return QApplication::exec();
 }
