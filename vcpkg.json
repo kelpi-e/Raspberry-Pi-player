@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    {
+      "name": "qt6",
+      "version>=": "6.5.0",
+      "features": ["core", "widgets", "multimedia"]
+    },
+    {
+      "name": "taglib",
+      "version>=": "1.13.0"
+    }
+  ],
+  "builtin-baseline": "2024.01.12"
+}
+
