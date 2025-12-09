@@ -35,10 +35,10 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
         if (!this->audio) return;
         if (this->audio->isPlaying()) {
             this->audio->pause();
-            ui.btnPlay->setText("Play");
+            ui.btnPlay->setText("▶︎");
         } else {
             this->audio->play(audio->getCurrentMediaType(),  audio->getCurrentlyPlaying());
-            ui.btnPlay->setText("Pause");
+            ui.btnPlay->setText("⏸");
         }
     });
 

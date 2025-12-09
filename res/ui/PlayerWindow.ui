@@ -1,231 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PlayerWindow</class>
- <widget class="QWidget" name="PlayerWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>320</width>
-    <height>240</height>
-   </rect>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QWidget#PlayerWindow {
-    background-color: #121212;
-    border-radius: 12px;
-}
+    <class>PlayerWindow</class>
+    <widget class="QWidget" name="PlayerWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>240</width>
+                <height>320</height>
+            </rect>
+        </property>
 
-QLabel {
-    color: #ffffff;
-    background-color: transparent;
-}
+        <property name="styleSheet">
+            <string notr="true">
+                QWidget#PlayerWindow {
+                background-color: #121212;
+                border-radius: 10px;
+                }
 
-QLabel#lblCover {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    border: 2px solid #2a2a2a;
-}
+                QLabel {
+                color: #ffffff;
+                background-color: transparent;
+                }
 
-QLabel#lblTitle {
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 4px;
-}
+                QLabel#lblCover {
+                background-color: #1e1e1e;
+                border-radius: 8px;
+                border: 2px solid #2a2a2a;
+                }
 
-QLabel#lblArtist {
-    color: #b3b3b3;
-    font-size: 13px;
-    padding: 2px;
-}
+                QLabel#lblTitle {
+                font-size: 14px;
+                font-weight: 600;
+                }
 
-QProgressBar {
-    background-color: #2a2a2a;
-    border: none;
-    border-radius: 4px;
-    height: 6px;
-    text-align: center;
-}
+                QLabel#lblArtist {
+                color: #b3b3b3;
+                font-size: 12px;
+                }
 
-QProgressBar::chunk {
-    background-color: #1db954;
-    border-radius: 4px;
-}
+                QProgressBar {
+                background-color: #2a2a2a;
+                border: none;
+                border-radius: 4px;
+                height: 6px;
+                }
 
-QPushButton {
-    background-color: #1e1e1e;
-    color: #ffffff;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    min-width: 50px;
-    min-height: 40px;
-}
+                QProgressBar::chunk {
+                background-color: #1db954;
+                border-radius: 4px;
+                }
 
-QPushButton:hover {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-}
+                QPushButton {
+                background-color: #1e1e1e;
+                color: #ffffff;
+                border: 1px solid #2a2a2a;
+                border-radius: 8px;
+                padding: 6px 10px;
+                font-size: 13px;
+                min-width: 40px;
+                min-height: 36px;
+                }
 
-QPushButton:pressed {
-    background-color: #151515;
-}
+                QPushButton#btnPlay {
+                background-color: #1db954;
+                border-color: #1db954;
+                font-weight: 600;
+                min-width: 60px;
+                }
+            </string>
+        </property>
 
-QPushButton#btnPlay {
-    background-color: #1db954;
-    border-color: #1db954;
-    font-weight: 600;
-    min-width: 70px;
-}
+        <layout class="QVBoxLayout" name="vLay">
+            <property name="spacing"><number>8</number></property>
+            <property name="leftMargin"><number>10</number></property>
+            <property name="topMargin"><number>10</number></property>
+            <property name="rightMargin"><number>10</number></property>
+            <property name="bottomMargin"><number>10</number></property>
 
-QPushButton#btnPlay:hover {
-    background-color: #1ed760;
-    border-color: #1ed760;
-}
+            <!-- ОБЛОЖКА ПО ЦЕНТРУ -->
+            <item>
+                <layout class="QHBoxLayout" name="hLayCover">
+                    <property name="alignment"><set>Qt::AlignHCenter</set></property>
+                    <item>
+                        <widget class="QLabel" name="lblCover">
+                            <property name="minimumSize"><size><width>160</width><height>160</height></size></property>
+                            <property name="maximumSize"><size><width>160</width><height>160</height></size></property>
+                            <property name="alignment"><set>Qt::AlignCenter</set></property>
+                            <property name="scaledContents"><bool>true</bool></property>
+                            <property name="text"><string>Обложка</string></property>
+                        </widget>
+                    </item>
+                </layout>
+            </item>
 
-QPushButton#btnPlay:pressed {
-    background-color: #1aa34a;
-}</string>
-  </property>
-  <layout class="QVBoxLayout" name="vLay">
-   <property name="spacing">
-    <number>12</number>
-   </property>
-   <property name="leftMargin">
-    <number>16</number>
-   </property>
-   <property name="topMargin">
-    <number>16</number>
-   </property>
-   <property name="rightMargin">
-    <number>16</number>
-   </property>
-   <property name="bottomMargin">
-    <number>16</number>
-   </property>
-   <item>
-    <widget class="QLabel" name="lblCover">
-     <property name="minimumSize">
-      <size>
-       <width>120</width>
-       <height>120</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>200</height>
-      </size>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="text">
-      <string>Обложка</string>
-     </property>
-     <property name="scaledContents">
-      <bool>true</bool>
-     </property>
+            <item>
+                <widget class="QLabel" name="lblTitle">
+                    <property name="alignment"><set>Qt::AlignCenter</set></property>
+                    <property name="text"><string>Название трека</string></property>
+                </widget>
+            </item>
+
+            <item>
+                <widget class="QLabel" name="lblArtist">
+                    <property name="alignment"><set>Qt::AlignCenter</set></property>
+                    <property name="text"><string>Исполнитель</string></property>
+                </widget>
+            </item>
+
+            <item>
+                <widget class="QProgressBar" name="pb">
+                    <property name="value"><number>0</number></property>
+                    <property name="textVisible"><bool>false</bool></property>
+                </widget>
+            </item>
+
+            <!-- КНОПКИ -->
+            <item>
+                <layout class="QHBoxLayout" name="hLayButtons">
+                    <property name="spacing"><number>8</number></property>
+
+                    <item>
+                        <widget class="QPushButton" name="btnPrev">
+                            <property name="text"><string>⏮</string></property>
+                        </widget>
+                    </item>
+
+                    <item>
+                        <spacer name="spLeft">
+                            <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                            <property name="sizeHint" stdset="0"><size><width>10</width><height>20</height></size></property>
+                        </spacer>
+                    </item>
+
+                    <item>
+                        <widget class="QPushButton" name="btnPlay">
+                            <property name="text"><string>▶</string></property>
+                        </widget>
+                    </item>
+
+                    <item>
+                        <spacer name="spRight">
+                            <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                            <property name="sizeHint" stdset="0"><size><width>10</width><height>20</height></size></property>
+                        </spacer>
+                    </item>
+
+                    <item>
+                        <widget class="QPushButton" name="btnNext">
+                            <property name="text"><string>⏭</string></property>
+                        </widget>
+                    </item>
+
+                </layout>
+            </item>
+
+        </layout>
     </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="lblTitle">
-     <property name="text">
-      <string>Название трека</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="lblArtist">
-     <property name="text">
-      <string>Исполнитель</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QProgressBar" name="pb">
-     <property name="value">
-      <number>0</number>
-     </property>
-     <property name="textVisible">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="hLay">
-     <property name="spacing">
-      <number>12</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="btnPrev">
-       <property name="text">
-        <string>⏮</string>
-       </property>
-       <property name="toolTip">
-        <string>Назад на 5 сек</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnPlay">
-       <property name="text">
-        <string>▶ Play</string>
-       </property>
-       <property name="toolTip">
-        <string>Воспроизвести/Пауза</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btnNext">
-       <property name="text">
-        <string>⏭</string>
-       </property>
-       <property name="toolTip">
-        <string>Вперед на 5 сек</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections/>
+
+    <resources/>
+    <connections/>
 </ui>
