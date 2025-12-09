@@ -12,9 +12,7 @@ build/
 *.dylib
 
 # Файлы IDE JetBrains
-.idea/*
-#!.idea/vcs.xml
-#!.idea/untitled3.iml
+.idea/
 
 # Логи и временные файлы
 *.log
