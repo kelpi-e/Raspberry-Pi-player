@@ -19,5 +19,5 @@
 
 
 constexpr float VOLUME = 0.05;
-constexpr int WIDTH = 240;
-constexpr int HEIGHT = 320;
+constexpr int WIDTH = 320;
+constexpr int HEIGHT = 240;

@@ -95,7 +95,7 @@ void PlayerWindow::updateCover() {
     if (!thumb.isNull()) {
         auto img = thumb.value<QImage>();
         ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
-            250, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation
+            180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation
         ));
         return;
     }
@@ -104,7 +104,7 @@ void PlayerWindow::updateCover() {
     if (!cover.isNull()) {
         QImage img = cover.value<QImage>();
         ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
-            250, 250, Qt::KeepAspectRatio, Qt::SmoothTransformation
+            180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation
         ));
         return;
     }

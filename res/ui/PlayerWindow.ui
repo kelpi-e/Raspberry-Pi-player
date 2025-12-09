@@ -110,14 +110,14 @@ QPushButton#btnPlay:pressed {
     <widget class="QLabel" name="lblCover">
      <property name="minimumSize">
       <size>
-       <width>150</width>
-       <height>150</height>
+       <width>120</width>
+       <height>120</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>300</width>
-       <height>300</height>
+       <width>200</width>
+       <height>200</height>
       </size>
      </property>
      <property name="alignment">
