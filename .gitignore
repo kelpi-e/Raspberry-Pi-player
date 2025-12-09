@@ -13,7 +13,7 @@ build/
 
 # Файлы IDE JetBrains
 .idea/*
-!.idea/vcs.xml
+#!.idea/vcs.xml
 !.idea/untitled3.iml
 
 # Логи и временные файлы
