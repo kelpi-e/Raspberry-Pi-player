@@ -1,5 +1,6 @@
 #pragma once
 #include "mp3strategy.h"
+#include "spotifystrategy.h"
 #include "youtubestrategy.h"
 
 enum class MediaType {
@@ -14,8 +15,8 @@ public:
         switch (type) {
             case MediaType::Mp3: return new Mp3Strategy();
             case MediaType::Youtube: return new YoutubeStrategy();
-            default: ;
+            case MediaType::Spotify: return new SpotifyStrategy();
+            default: return nullptr;
         }
-        return nullptr;
     }
 };

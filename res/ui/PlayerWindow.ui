@@ -56,17 +56,27 @@
                 color: #ffffff;
                 border: 1px solid #2a2a2a;
                 border-radius: 8px;
-                padding: 6px 10px;
-                font-size: 13px;
-                min-width: 40px;
-                min-height: 36px;
+                padding: 5px 8px;
+                font-size: 10px;
+                min-width: 32px;
+                min-height: 29px;
                 }
 
                 QPushButton#btnPlay {
                 background-color: #1db954;
                 border-color: #1db954;
                 font-weight: 600;
-                min-width: 60px;
+                min-width: 48px;
+                }
+
+                QLabel#lblTime {
+                font-size: 12px;
+                color: #ffffff;
+                }
+
+                QLabel#lblBattery {
+                font-size: 12px;
+                color: #ffffff;
                 }
             </string>
         </property>
@@ -77,6 +87,28 @@
             <property name="topMargin"><number>10</number></property>
             <property name="rightMargin"><number>10</number></property>
             <property name="bottomMargin"><number>10</number></property>
+
+            <!-- ВРЕМЯ И БАТАРЕЯ -->
+            <item>
+                <layout class="QHBoxLayout" name="hLayStatus">
+                    <item>
+                        <widget class="QLabel" name="lblTime">
+                            <property name="text"><string>00:00</string></property>
+                        </widget>
+                    </item>
+                    <item>
+                        <spacer name="spStatus">
+                            <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                            <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+                        </spacer>
+                    </item>
+                    <item>
+                        <widget class="QLabel" name="lblBattery">
+                            <property name="text"><string>100%</string></property>
+                        </widget>
+                    </item>
+                </layout>
+            </item>
 
             <!-- ОБЛОЖКА ПО ЦЕНТРУ -->
             <item>

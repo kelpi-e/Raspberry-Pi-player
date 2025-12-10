@@ -60,7 +60,5 @@ int main(int argc, char *argv[]) {
     win.resize(proxy->sceneBoundingRect().size().toSize());
     win.show();
 
-
-
     return QApplication::exec();
 }
