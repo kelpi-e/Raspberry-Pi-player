@@ -17,6 +17,8 @@ add_executable(Raspberry-Pi-player
         ${UI_FILES}
         res/audio/PlayerAudio.cpp
         res/audio/PlayerAudio.h
+        res/ui/MarqueeController.cpp
+        res/ui/MarqueeController.h
 )
 
 target_include_directories(Raspberry-Pi-player PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

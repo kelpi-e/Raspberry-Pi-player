@@ -1,4 +1,5 @@
 #pragma once
+#include "MarqueeController.h"
 #include "../pch.h"
 #include "../audio/PlayerAudio.h"
 #include "ui_PlayerWindow.h"
@@ -30,5 +31,6 @@ private:
     QLabel *timeLabel{};
     QTimer *timer{};
     PlayerAudio *audio{};
-
+    MarqueeController* titleMarquee;
+    MarqueeController* artistMarquee;
 };

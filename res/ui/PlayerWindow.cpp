@@ -1,5 +1,4 @@
 #include "PlayerWindow.h"
-
 #include <QMainWindow>
 
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
@@ -8,9 +7,10 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(WIDTH, HEIGHT);
+    titleMarquee = new MarqueeController(ui.lblTitle);
+    artistMarquee = new MarqueeController(ui.lblArtist);
 
     progressBar = ui.pb;
-
     connect(audio->getPlayer(),
             &QMediaPlayer::mediaStatusChanged,
             this,
@@ -20,13 +20,13 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
             QString title = audio->getTitle(audio->getCurrentlyPlaying());
             if(title.isEmpty())
                 title = "no title";
-            ui.lblTitle->setText(title);
+            titleMarquee->setText(audio->getTitle(audio->getCurrentlyPlaying()));
 
             QString artist = audio->getArtist(audio->getCurrentlyPlaying());
             if(artist.isEmpty())
                 artist = "unknown";
             artist = "by " + artist;
-            ui.lblArtist->setText(artist);
+            artistMarquee->setText("by " + audio->getArtist(audio->getCurrentlyPlaying()));
         }
     });
 

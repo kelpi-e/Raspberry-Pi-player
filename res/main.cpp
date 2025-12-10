@@ -7,6 +7,13 @@
 
 int main(int argc, char *argv[]) {
 
+    bool ok = false;
+    const qreal rotation = QString::fromLatin1(argv[1]).toDouble(&ok);
+    if (!ok) {
+        qDebug() << "[DEBUG] Invalid argument";
+        return 1;
+    }
+
     QApplication app(argc, argv);
 
     const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/1.mp3";
@@ -22,7 +29,7 @@ int main(int argc, char *argv[]) {
     // Сцена
     QGraphicsScene scene;
     QGraphicsProxyWidget* proxy = scene.addWidget(player);
-    proxy->setRotation(90);  // Поворот
+    proxy->setRotation(rotation);  // Поворот
 
     // После поворота сцена подгоняется под размер прокси
     scene.setSceneRect(proxy->sceneBoundingRect());
