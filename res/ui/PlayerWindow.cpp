@@ -1,5 +1,7 @@
 #include "PlayerWindow.h"
 #include <QMainWindow>
+#include <QKeyEvent>
+#include <QMediaMetaData>
 
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     : QWidget(parent), audio(audio)
@@ -14,19 +16,19 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     connect(audio->getPlayer(),
             &QMediaPlayer::mediaStatusChanged,
             this,
-            [this, audio](QMediaPlayer::MediaStatus s){
+            [this, audio](const QMediaPlayer::MediaStatus s){
         if(s == QMediaPlayer::LoadedMedia || s == QMediaPlayer::BufferedMedia)
         {
             QString title = audio->getTitle(audio->getCurrentlyPlaying());
             if(title.isEmpty())
                 title = "no title";
-            titleMarquee->setText(audio->getTitle(audio->getCurrentlyPlaying()));
+            titleMarquee->setText(title);
 
             QString artist = audio->getArtist(audio->getCurrentlyPlaying());
             if(artist.isEmpty())
                 artist = "unknown";
             artist = "by " + artist;
-            artistMarquee->setText("by " + audio->getArtist(audio->getCurrentlyPlaying()));
+            artistMarquee->setText(artist);
         }
     });
 

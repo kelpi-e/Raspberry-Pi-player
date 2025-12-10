@@ -1,7 +1,7 @@
 #pragma once
 #include "mediafactory.h"
 #include "../pch.h"
-
+#include <QMediaPlayer>
 class PlayerAudio : public QObject {
     Q_OBJECT
 public:

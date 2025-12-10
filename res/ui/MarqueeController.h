@@ -1,10 +1,8 @@
 #pragma once
-#include "../pch.h"
-#include <QObject>
+
 #include <QLabel>
 #include <QTimer>
 #include <QString>
-#include <QFontMetrics>
 
 class MarqueeController : public QObject {
     Q_OBJECT

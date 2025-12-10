@@ -1,8 +1,9 @@
 #include "PlayerAudio.h"
-#include <QProcess>
-
 #include "mediastategy.h"
-
+#include <QAudioOutput>
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include <QFileInfo>
 PlayerAudio::PlayerAudio(QObject *parent)
     : QObject(parent)
 {

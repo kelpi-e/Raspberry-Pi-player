@@ -6,7 +6,15 @@ set -e
 PROJ_DIR="$HOME/Raspberry-Pi-player"
 BUILD_DIR="$PROJ_DIR/build"
 APP="$BUILD_DIR/untitled3"
-ROTATION=0
+
+# === ПОВОРОТ ===
+ROTATION=${1:-0}   # если аргумент не передан, по умолчанию 0
+
+# Проверка, что ROTATION — число
+if ! [[ "$ROTATION" =~ ^[0-9]+$ ]]; then
+    echo "Ошибка: аргумент поворота должен быть числом (0, 90, 180, 270)"
+    exit 1
+fi
 
 # === СБОРКА ===
 echo "[1/3] Удаление старой сборки..."
@@ -31,6 +39,5 @@ fi
 echo "Запуск приложения с поворотом $ROTATION°..."
 
 export QT_QPA_PLATFORM=linuxfb
-export QT_QPA_FB_ROTATION=$ROTATION
 
-"$APP"
+"$APP" "$ROTATION"  # передаём угол как аргумент

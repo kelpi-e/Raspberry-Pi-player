@@ -4,15 +4,17 @@
 
 enum class MediaType {
     Mp3,
-    Youtube
+    Youtube,
+    Spotify
 };
 
 class MediaFactory {
 public:
-    static MediaStrategy* create(MediaType type) {
+    static MediaStrategy* create(const MediaType type) {
         switch (type) {
-            case MediaType::Mp3:      return new Mp3Strategy();
-            case MediaType::Youtube:  return new YoutubeStrategy();
+            case MediaType::Mp3: return new Mp3Strategy();
+            case MediaType::Youtube: return new YoutubeStrategy();
+            default: ;
         }
         return nullptr;
     }

@@ -1,6 +1,5 @@
 #pragma once
 #include "MarqueeController.h"
-#include "../pch.h"
 #include "../audio/PlayerAudio.h"
 #include "ui_PlayerWindow.h"
 

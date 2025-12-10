@@ -7,10 +7,21 @@
 
 int main(int argc, char *argv[]) {
 
-    bool ok = false;
-    const qreal rotation = QString::fromLatin1(argv[1]).toDouble(&ok);
-    if (!ok) {
-        qDebug() << "[DEBUG] Invalid argument";
+    qreal rotation;
+    if (argc <= 1) {
+        qWarning() << "No rotation angle was passed using default 0";
+        rotation = 0.0;
+    }
+    else if (argc <= 2) {
+        bool ok = false;
+        rotation = QString::fromLatin1(argv[1]).toDouble(&ok);
+        if (!ok) {
+            qFatal() << "Invalid rotation argument must be float or integer";
+            return 1;
+        }
+    }
+    else {
+        qFatal() << "Too many arguments";
         return 1;
     }
 
