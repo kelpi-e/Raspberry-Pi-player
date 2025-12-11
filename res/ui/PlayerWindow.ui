@@ -80,6 +80,7 @@
                 font-size: 12px;
                 color: #ffffff;
                 }
+
             </string>
         </property>
 
@@ -90,78 +91,93 @@
             <property name="rightMargin"><number>10</number></property>
             <property name="bottomMargin"><number>10</number></property>
 
-            <!-- ВРЕМЯ, БАТАРЕЯ И ИКОНКИ -->
+            <!-- ================= СТРОКА СТАТУСА ================= -->
             <item>
                 <layout class="QHBoxLayout" name="hLayStatus">
                     <property name="spacing"><number>4</number></property>
 
-                    <!-- Время слева -->
+                    <!-- Время -->
                     <item>
                         <widget class="QLabel" name="lblTime">
                             <property name="text"><string>00:00:00</string></property>
                         </widget>
                     </item>
 
-                    <!-- Spacer между временем и иконками справа -->
+                    <!-- Растягивающий spacer -->
                     <item>
-                        <spacer name="spacerTimeToRight">
+                        <spacer name="spacerTimeToIcons">
                             <property name="orientation"><enum>Qt::Horizontal</enum></property>
                             <property name="sizeHint">
-                                <size><width>10</width><height>0</height></size>
+                                <size><width>20</width><height>0</height></size>
                             </property>
                         </spacer>
                     </item>
 
-                    <!-- Контейнер для батареи + иконок -->
+                    <!-- Молния -->
                     <item>
-                        <layout class="QHBoxLayout" name="hLayRightIcons">
-                            <property name="spacing"><number>2</number></property>
+                        <widget class="QLabel" name="lblCharging">
+                            <property name="pixmap"><pixmap>:/res/ui/icons/lightning.svg</pixmap></property>
+                            <property name="scaledContents"><bool>true</bool></property>
+                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
+                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
+                        </widget>
+                    </item>
 
-                            <!-- Процент батареи -->
-                            <item>
-                                <widget class="QLabel" name="lblBattery">
-                                    <property name="text"><string>100%</string></property>
-                                </widget>
-                            </item>
+                    <!-- Процент -->
+                    <item>
+                        <widget class="QLabel" name="lblBattery">
+                            <property name="text"><string>100%</string></property>
+                        </widget>
+                    </item>
 
-                            <!-- Иконка зарядки -->
-                            <item>
-                                <widget class="QLabel" name="lblCharging">
-                                    <property name="pixmap">
-                                        <pixmap>:/res/ui/icons/lightning.svg</pixmap>
-                                    </property>
-                                    <property name="scaledContents"><bool>true</bool></property>
-                                    <property name="minimumSize">
-                                        <size><width>16</width><height>16</height></size>
-                                    </property>
-                                    <property name="maximumSize">
-                                        <size><width>16</width><height>16</height></size>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed"/>
-                                    </property>
-                                </widget>
-                            </item>
+                    <!-- Bluetooth -->
+                    <item>
+                        <widget class="QLabel" name="lblBluetooth">
+                            <property name="pixmap"><pixmap>:/res/ui/icons/bluetooth.svg</pixmap></property>
+                            <property name="scaledContents"><bool>true</bool></property>
+                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
+                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
+                        </widget>
+                    </item>
 
-                            <!-- Иконка Wi-Fi -->
-                            <item>
-                                <widget class="QLabel" name="lblWifi">
-                                    <property name="pixmap">
-                                        <pixmap>:/res/ui/icons/wifi.svg</pixmap>
-                                    </property>
-                                    <property name="scaledContents"><bool>true</bool></property>
-                                    <property name="minimumSize">
-                                        <size><width>16</width><height>16</height></size>
-                                    </property>
-                                    <property name="maximumSize">
-                                        <size><width>16</width><height>16</height></size>
-                                    </property>
-                                    <property name="sizePolicy">
-                                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed"/>
-                                    </property>
-                                </widget>
-                            </item>
-                        </layout>
+                    <!-- WiFi -->
+                    <item>
+                        <widget class="QLabel" name="lblWifi">
+                            <property name="pixmap"><pixmap>:/res/ui/icons/wifi.svg</pixmap></property>
+                            <property name="scaledContents"><bool>true</bool></property>
+                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
+                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
+                        </widget>
+                    </item>
+
+                </layout>
+            </item>
+
+            <!-- ================= КНОПКА МЕНЮ ПОД ИКОНКАМИ ================= -->
+            <item>
+                <layout class="QHBoxLayout" name="hLayMenu">
+                    <property name="spacing"><number>0</number></property>
+
+                    <!-- Spacer чтобы прижать кнопку вправо -->
+                    <item>
+                        <spacer name="spMenuLeft">
+                            <property name="orientation"><enum>Qt::Horizontal</enum></property>
+                        </spacer>
+                    </item>
+
+                    <!-- Кнопка меню -->
+                    <item>
+                        <widget class="QPushButton" name="btnMenu">
+                            <property name="icon">
+                                <iconset>
+                                    <normaloff>:/res/ui/icons/menu.svg</normaloff>
+                                </iconset>
+                            </property>
+                            <property name="iconSize"><size><width>14</width><height>14</height></size></property>
+                            <property name="flat"><bool>true</bool></property>
+                            <property name="minimumSize"><size><width>18</width><height>18</height></size></property>
+                            <property name="maximumSize"><size><width>18</width><height>18</height></size></property>
+                        </widget>
                     </item>
                 </layout>
             </item>

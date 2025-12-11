@@ -32,10 +32,13 @@ public:
 
     QMediaPlayer* getPlayer () const;
 
+    void setVolume(float v);
+    float getVolume() const;
 private:
     QMediaPlayer *player;
     QAudioOutput *out{};
     qint64 currentPosition = 0;
     QString currentlyPlaying = "";
     MediaType currentMediaType{};
+    float volume = VOLUME;
 };

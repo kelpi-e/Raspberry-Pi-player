@@ -9,5 +9,8 @@
         <file>wifi.svg</file>
         <file>nowifi.svg</file>
         <file>lightning.svg</file>
+        <file>bluetooth.svg</file>
+        <file>nobluetooth.svg</file>
+        <file>menu.svg</file>
     </qresource>
 </RCC>

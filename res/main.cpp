@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
 
-    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/1.mp3";
+    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
     const QString url = "https://youtu.be/mzfizVNCNbc?si=9kk4jxifKGRWeL9N";
 
     PlayerAudio audio;

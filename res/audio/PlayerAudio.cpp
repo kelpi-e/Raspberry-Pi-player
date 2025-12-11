@@ -108,3 +108,7 @@ void PlayerAudio::setCurrentMediaType(const MediaType type) {
 MediaType PlayerAudio::getCurrentMediaType () {
     return currentMediaType;
 }
+
+void PlayerAudio::setVolume (float v) { volume = v; }
+
+float PlayerAudio::getVolume() const { return volume; }

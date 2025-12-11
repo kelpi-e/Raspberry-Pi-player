@@ -11,7 +11,6 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(WIDTH, HEIGHT);
-    this->setCursor(Qt::BlankCursor);
 
     ui.lblWifi->setVisible(true);
     ui.lblWifi->setVisible(true);
@@ -116,11 +115,17 @@ void PlayerWindow::keyPressEvent(QKeyEvent *event) {
             ui.btnPlay->setIcon(QIcon(":/res/ui/icons/pause.svg"));
         }
     }
-    if (event->key() == Qt::Key_Left) {
+    else if (event->key() == Qt::Key_Left) {
         backwardRewind(5);
     }
     else if (event->key() == Qt::Key_Right) {
         forwardRewind(5);
+    }
+    else if (event->key() == Qt::Key_Up) {
+        audio->setVolume(audio->getVolume() + 0.1);
+    }
+    else if (event->key() == Qt::Key_Down) {
+        audio->setVolume(audio->getVolume() - 0.1);
     }
 }
 

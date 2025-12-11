@@ -122,63 +122,10 @@ pip3 install yt-dlp
 .\Raspberry-Pi-player.exe  # Windows
 ```
 
-### Использование
-
-- Приложение автоматически запускается с тестовым YouTube URL
-- Для воспроизведения локальных MP3 файлов измените код в `main.cpp` или добавьте функционал выбора файла
-- Интерфейс повернут на 90 градусов для вертикального дисплея Raspberry Pi
-
-## Структура проекта
-
-```
-Raspberry-Pi-player/
-├── CMakeLists.txt          # Конфигурация сборки CMake
-├── vcpkg.json              # Манифест зависимостей vcpkg
-├── README.md               # Документация проекта
-├── res/
-│   ├── main.cpp           # Точка входа приложения
-│   ├── pch.h              # Precompiled headers
-│   ├── audio/             # Модуль воспроизведения аудио
-│   │   ├── PlayerAudio.h/cpp
-│   │   ├── mediafactory.h
-│   │   ├── mediastategy.h
-│   │   ├── mp3strategy.h
-│   │   └── youtubestrategy.h
-│   ├── ui/                # Пользовательский интерфейс
-│   │   ├── PlayerWindow.h/cpp
-│   │   └── PlayerWindow.ui
-│   ├── music/             # Директория для MP3 файлов
-│   └── python/            # Python скрипты (если требуется)
-└── build/                 # Директория сборки (создается)
-```
-
-## Архитектура
-
-Проект использует паттерн Strategy для поддержки различных типов медиа:
-
-- **Mp3Strategy** - обработка локальных MP3 файлов
-- **YoutubeStrategy** - обработка YouTube URL через yt-dlp
-- **MediaFactory** - фабрика для создания стратегий
-- **PlayerAudio** - основной класс для управления воспроизведением
-- **PlayerWindow** - графический интерфейс пользователя
-
-## Разработка
-
-### Добавление новых типов медиа
-
-1. Создайте новый класс, наследующийся от `MediaStrategy`
-2. Реализуйте метод `resolve()`
-3. Добавьте новый тип в `MediaType` enum
-4. Обновите `MediaFactory::create()`
-
-### Изменение интерфейса
-
-Файл `res/ui/PlayerWindow.ui` можно редактировать в Qt Designer или Qt Creator.
-
-## Лицензия
-
-MIT License
-
 ## Авторы
 
+- tg :[@mikoshidoomsday](https://t.me/mikoshidoomsday)
+- email: [al_rus_06@mail.ru](mailto:al_rus_06@mail.ru)
+## Текущее состояние:
 
+![img.png](img.png)
