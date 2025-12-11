@@ -1,6 +1,6 @@
 #include "MarqueeController.h"
 
-MarqueeController::MarqueeController(QLabel* label, int interval)
+MarqueeController::MarqueeController(QLabel* label, const int interval)
     : QObject(label), lbl(label)
 {
     timer.setInterval(interval);

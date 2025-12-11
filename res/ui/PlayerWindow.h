@@ -2,6 +2,7 @@
 #include "MarqueeController.h"
 #include "../audio/PlayerAudio.h"
 #include "ui_PlayerWindow.h"
+#include "../utils/timemanager.h"
 
 class PlayerWindow : public QWidget {
     Q_OBJECT

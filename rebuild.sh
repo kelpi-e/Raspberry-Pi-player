@@ -5,7 +5,7 @@ set -e
 # === НАСТРОЙКИ ===
 PROJ_DIR="$HOME/Raspberry-Pi-player"
 BUILD_DIR="$PROJ_DIR/build"
-APP="$BUILD_DIR/untitled3"
+APP="$BUILD_DIR/Raspberry-Pi-player"
 
 # === ПОВОРОТ ===
 ROTATION=${1:-0}   # если аргумент не передан, по умолчанию 0

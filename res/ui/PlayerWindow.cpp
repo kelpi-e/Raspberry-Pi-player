@@ -2,6 +2,7 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QMediaMetaData>
+#include <QTime>
 
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     : QWidget(parent), audio(audio)
@@ -9,10 +10,22 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(WIDTH, HEIGHT);
-    titleMarquee = new MarqueeController(ui.lblTitle);
-    artistMarquee = new MarqueeController(ui.lblArtist);
+
+    ui.lblWifi->setVisible(true);
+    ui.lblWifi->setVisible(true);
+
+    titleMarquee = new MarqueeController(ui.lblTitle, 200);
+    artistMarquee = new MarqueeController(ui.lblArtist, 200);
 
     progressBar = ui.pb;
+    timeLabel = ui.lblTime;
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        if (timeLabel)
+            timeLabel->setText(QTime::currentTime().toString("HH:mm:ss"));
+    });
+
+    timer->start(1000);
     connect(audio->getPlayer(),
             &QMediaPlayer::mediaStatusChanged,
             this,
@@ -37,10 +50,10 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
         if (!this->audio) return;
         if (this->audio->isPlaying()) {
             this->audio->pause();
-            ui.btnPlay->setText("▶︎");
+            ui.btnPlay->setIcon(QIcon(":/res/ui/icons/play.svg"));
         } else {
             this->audio->play(audio->getCurrentMediaType(),  audio->getCurrentlyPlaying());
-            ui.btnPlay->setText("⏸");
+            ui.btnPlay->setIcon(QIcon(":/res/ui/icons/pause.svg"));
         }
     });
 
@@ -59,14 +72,30 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     connect(audio->getPlayer(), &QMediaPlayer::metaDataChanged,
         this, &PlayerWindow::updateCover);
 
+}
+QString msToTime(qint64 ms) {
+    qint64 totalSeconds = ms / 1000;
+    qint64 hours = totalSeconds / 3600;
+    qint64 minutes = (totalSeconds % 3600) / 60;
+    qint64 seconds = totalSeconds % 60;
 
-
+    if (hours > 0)
+        return QString("%1:%2:%3")
+            .arg(hours, 1, 10, QLatin1Char('0'))
+            .arg(minutes, 2, 10, QLatin1Char('0'))
+            .arg(seconds, 2, 10, QLatin1Char('0'));
+    else
+        return QString("%1:%2")
+            .arg(minutes, 1, 10, QLatin1Char('0'))
+            .arg(seconds, 2, 10, QLatin1Char('0'));
 }
 void PlayerWindow::updateProgressBar(qint64 pos) {
     progressBar->setValue(pos);
+    ui.lblCur->setText(msToTime(pos));
 }
 void PlayerWindow::updateProgressRange(qint64 dur) {
     progressBar->setRange(0, dur);
+    ui.lblDur->setText(msToTime(dur));
 }
 
 
@@ -118,3 +147,4 @@ void PlayerWindow::updateCover() {
 PlayerAudio* PlayerWindow::getAudio() {
     return audio;
 }
+

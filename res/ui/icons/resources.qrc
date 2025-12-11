@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/res/ui/icons">
+        <file>play.svg</file>
+        <file>pause.svg</file>
+        <file>pref.svg</file>
+        <file>next.svg</file>
+        <file>shuffle.svg</file>
+        <file>repeat.svg</file>
+        <file>wifi.svg</file>
+        <file>nowifi.svg</file>
+        <file>lightning.svg</file>
+    </qresource>
+</RCC>

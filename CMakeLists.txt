@@ -8,7 +8,11 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
 
+# UI
 set(UI_FILES res/ui/PlayerWindow.ui)
+
+# RESOURCES
+qt_add_resources(player_resources res/ui/icons/resources.qrc)
 
 add_executable(Raspberry-Pi-player
         res/main.cpp
@@ -19,6 +23,7 @@ add_executable(Raspberry-Pi-player
         res/audio/PlayerAudio.h
         res/ui/MarqueeController.cpp
         res/ui/MarqueeController.h
+        ${player_resources}
 )
 
 target_include_directories(Raspberry-Pi-player PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
