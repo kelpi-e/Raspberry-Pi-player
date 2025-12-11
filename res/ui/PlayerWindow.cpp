@@ -7,9 +7,11 @@
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     : QWidget(parent), audio(audio)
 {
+
     ui.setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(WIDTH, HEIGHT);
+    this->setCursor(Qt::BlankCursor);
 
     ui.lblWifi->setVisible(true);
     ui.lblWifi->setVisible(true);
@@ -103,6 +105,22 @@ void PlayerWindow::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Escape) {
         emit requestClose();
         close();
+    }
+    else if (event->key() == Qt::Key_Space) {
+        if (audio->isPlaying()) {
+            audio->pause();
+            ui.btnPlay->setIcon(QIcon(":/res/ui/icons/play.svg"));
+        }
+        else {
+            audio->play(audio->getCurrentMediaType(), audio->getCurrentlyPlaying());
+            ui.btnPlay->setIcon(QIcon(":/res/ui/icons/pause.svg"));
+        }
+    }
+    if (event->key() == Qt::Key_Left) {
+        backwardRewind(5);
+    }
+    else if (event->key() == Qt::Key_Right) {
+        forwardRewind(5);
     }
 }
 
