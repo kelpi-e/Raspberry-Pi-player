@@ -128,4 +128,4 @@ pip3 install yt-dlp
 - email: [al_rus_06@mail.ru](mailto:al_rus_06@mail.ru)
 ## Текущее состояние:
 
-![img.png](img.png)
+![img_3.png](img_3.png)
