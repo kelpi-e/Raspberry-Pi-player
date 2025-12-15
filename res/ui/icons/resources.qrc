@@ -12,5 +12,7 @@
         <file>bluetooth.svg</file>
         <file>nobluetooth.svg</file>
         <file>menu.svg</file>
+        <file>shuffleenabled.svg</file>
+        <file>repeatenabled.svg</file>
     </qresource>
 </RCC>

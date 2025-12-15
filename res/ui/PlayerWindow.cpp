@@ -72,29 +72,48 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
             this, &PlayerWindow::updateProgressRange);
     connect(audio->getPlayer(), &QMediaPlayer::metaDataChanged,
         this, &PlayerWindow::updateCover);
+    connect(ui.btnLoop, &QPushButton::clicked, this, [this]() {
+        if (!isrepeat) {
+            ui.btnLoop->setIcon(QIcon(":/res/ui/icons/repeatenabled.svg"));
+            isrepeat = true;
+        }
+        else {
+            ui.btnLoop->setIcon(QIcon(":/res/ui/icons/repeat.svg"));
+            isrepeat = false;
+        }
+    });
+    connect(ui.btnShuffle, &QPushButton::clicked, this, [this]() {
+    if (!isrepeat) {
+        ui.btnShuffle->setIcon(QIcon(":/res/ui/icons/shuffleenabled.svg"));
+        isrepeat = true;
+    }
+    else {
+        ui.btnShuffle->setIcon(QIcon(":/res/ui/icons/shuffle.svg"));
+        isrepeat = false;
+    }
+});
 
 }
-QString msToTime(qint64 ms) {
-    qint64 totalSeconds = ms / 1000;
-    qint64 hours = totalSeconds / 3600;
-    qint64 minutes = (totalSeconds % 3600) / 60;
-    qint64 seconds = totalSeconds % 60;
+QString msToTime(const qint64 ms) {
+    const qint64 totalSeconds = ms / 1000;
+    const qint64 hours = totalSeconds / 3600;
+    const qint64 minutes = (totalSeconds % 3600) / 60;
+    const qint64 seconds = totalSeconds % 60;
 
     if (hours > 0)
         return QString("%1:%2:%3")
             .arg(hours, 1, 10, QLatin1Char('0'))
             .arg(minutes, 2, 10, QLatin1Char('0'))
             .arg(seconds, 2, 10, QLatin1Char('0'));
-    else
-        return QString("%1:%2")
+    return QString("%1:%2")
             .arg(minutes, 1, 10, QLatin1Char('0'))
             .arg(seconds, 2, 10, QLatin1Char('0'));
 }
-void PlayerWindow::updateProgressBar(qint64 pos) {
+void PlayerWindow::updateProgressBar(qint64 pos) const {
     progressBar->setValue(pos);
     ui.lblCur->setText(msToTime(pos));
 }
-void PlayerWindow::updateProgressRange(qint64 dur) {
+void PlayerWindow::updateProgressRange(const qint64 dur) const {
     progressBar->setRange(0, dur);
     ui.lblDur->setText(msToTime(dur));
 }
@@ -156,7 +175,7 @@ void PlayerWindow::updateCover() {
 
     QVariant cover = md.value(QMediaMetaData::CoverArtImage);
     if (!cover.isNull()) {
-        QImage img = cover.value<QImage>();
+        auto img = cover.value<QImage>();
         ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
             180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation
         ));

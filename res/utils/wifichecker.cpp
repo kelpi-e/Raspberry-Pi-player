@@ -14,7 +14,8 @@ bool Wifichecker::hasNetworkAccess() {
 
 
 
-void Wifichecker::checkSiteAsync(const QString &url_string, const std::function<void(bool)>& callback, const int timeout = 5000) {
+void Wifichecker::checkSiteAsync(const QString &url_string, const std::function<void(bool)>& callback, int timeout = 5) {
+    timeout *= 1000;
     const QUrl url = QUrl::fromUserInput(url_string);
     if(!url.isValid()) {
         callback(false);

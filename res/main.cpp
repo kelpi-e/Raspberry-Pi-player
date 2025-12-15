@@ -35,11 +35,11 @@ int main(int argc, char *argv[]) {
     checker.checkSiteAsync("https://spotify.com", [](const bool ok){
         if(ok) qInfo() << "[INFO] spotify available";
         else qInfo() << "[INFO] spotify NOT available";
-    }, 5000);
+    }, 5);
     checker.checkSiteAsync("https://youtube.com", [](const bool ok){
         if(ok) qInfo() << "[INFO] youtube available";
         else qInfo() << "[INFO] youtube NOT available";
-    }, 5000);
+    }, 5);
 
     const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
     const QString url = "https://youtu.be/mzfizVNCNbc?si=9kk4jxifKGRWeL9N";

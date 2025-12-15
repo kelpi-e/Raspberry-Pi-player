@@ -18,9 +18,9 @@ public:
 
     PlayerAudio *getAudio();
 
-    void updateProgressBar (qint64 pos);
+    void updateProgressBar (qint64 pos) const;
 
-    void updateProgressRange(qint64 dur);
+    void updateProgressRange(qint64 dur) const;
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -33,4 +33,5 @@ private:
     PlayerAudio *audio{};
     MarqueeController* titleMarquee;
     MarqueeController* artistMarquee;
+    bool isrepeat = false;
 };
