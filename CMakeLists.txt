@@ -9,7 +9,9 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
 
 # UI
-set(UI_FILES res/ui/PlayerWindow.ui)
+set(UI_FILES res/ui/PlayerWindow.ui
+        res/utils/wifichecker.cpp
+        res/utils/wifichecker.h)
 
 # RESOURCES
 qt_add_resources(player_resources res/ui/icons/resources.qrc)

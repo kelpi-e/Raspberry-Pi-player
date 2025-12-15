@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsProxyWidget>
 #include <QMainWindow>
+#include "utils/wifichecker.h"
 
 int main(int argc, char *argv[]) {
 
@@ -27,12 +28,24 @@ int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
 
+    if(Wifichecker::hasNetworkAccess())
+        qInfo() << "[INFO] Network adapter found";
+
+    Wifichecker checker;
+    checker.checkSiteAsync("https://spotify.com", [](const bool ok){
+        if(ok) qInfo() << "[INFO] spotify available";
+        else qInfo() << "[INFO] spotify NOT available";
+    }, 5000);
+    checker.checkSiteAsync("https://youtube.com", [](const bool ok){
+        if(ok) qInfo() << "[INFO] youtube available";
+        else qInfo() << "[INFO] youtube NOT available";
+    }, 5000);
+
     const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
     const QString url = "https://youtu.be/mzfizVNCNbc?si=9kk4jxifKGRWeL9N";
 
     PlayerAudio audio;
 
-    // Создаём PlayerWindow
     auto* player = new PlayerWindow(nullptr, &audio);
     player->getAudio()->setCurrentlyPlaying(fileName);
     player->getAudio()->setCurrentMediaType(MediaType::Mp3);
