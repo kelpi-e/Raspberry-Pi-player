@@ -10,19 +10,19 @@ int main(int argc, char *argv[]) {
 
     qreal rotation;
     if (argc <= 1) {
-        qWarning() << "No rotation angle was passed using default 0";
+        qWarning() << "[WARNING] No rotation angle was passed using default 0";
         rotation = 0.0;
     }
     else if (argc <= 2) {
         bool ok = false;
         rotation = QString::fromLatin1(argv[1]).toDouble(&ok);
         if (!ok) {
-            qFatal() << "Invalid rotation argument must be float or integer";
+            qFatal() << "[FATAL] Invalid rotation argument must be float or integer";
             return 1;
         }
     }
     else {
-        qFatal() << "Too many arguments";
+        qFatal() << "[FATAL] Too many arguments";
         return 1;
     }
 
