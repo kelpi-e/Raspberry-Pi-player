@@ -1,10 +1,6 @@
 #pragma once
 #include <QProcess>
 #include <QString>
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 
 class xraycontroller {
 public:

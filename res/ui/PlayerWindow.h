@@ -1,5 +1,5 @@
 #pragma once
-#include "MarqueeController.h"
+#include "../utils/MarqueeController.h"
 #include "../audio/PlayerAudio.h"
 #include "ui_PlayerWindow.h"
 #include "../utils/timemanager.h"

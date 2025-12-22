@@ -6,35 +6,42 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
+find_package(Qt6 REQUIRED COMPONENTS
+        Core
+        Widgets
+        Multimedia
+        WebEngineWidgets
+)
 
-# UI
-set(UI_FILES res/ui/PlayerWindow.ui
-        res/utils/wifichecker.cpp
-        res/utils/wifichecker.h
-        res/utils/xraycontroller.cpp
-        res/utils/xraycontroller.h)
-
-# RESOURCES
 qt_add_resources(player_resources res/ui/icons/resources.qrc)
 
 add_executable(Raspberry-Pi-player
         res/main.cpp
         res/ui/PlayerWindow.cpp
         res/ui/PlayerWindow.h
-        ${UI_FILES}
+        res/ui/PlayerScene.cpp
+        res/ui/PlayerScene.h
+        res/ui/SpotifyScene.cpp
+        res/ui/SpotifyScene.h
         res/audio/PlayerAudio.cpp
         res/audio/PlayerAudio.h
-        res/ui/MarqueeController.cpp
-        res/ui/MarqueeController.h
+        res/utils/wifichecker.cpp
+        res/utils/wifichecker.h
+        res/utils/xraycontroller.cpp
+        res/utils/xraycontroller.h
+        res/utils/MarqueeController.cpp
+        res/utils/MarqueeController.h
         ${player_resources}
 )
 
-target_include_directories(Raspberry-Pi-player PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(Raspberry-Pi-player
+        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 target_link_libraries(Raspberry-Pi-player
         Qt6::Core
         Qt6::Widgets
         Qt6::Multimedia
+        Qt6::WebEngineWidgets
         tag
 )

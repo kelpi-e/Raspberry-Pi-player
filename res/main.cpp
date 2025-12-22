@@ -1,10 +1,8 @@
-#include "ui/PlayerWindow.h"
-#include "audio/PlayerAudio.h"
-#include <QApplication>
-#include <QGraphicsView>
-#include <QGraphicsProxyWidget>
-#include <QMainWindow>
 #include "utils/wifichecker.h"
+#include "utils/xraycontroller.h"
+#include "ui/PlayerScene.h"
+#include "ui/SpotifyScene.h"
+#include <QApplication>
 
 int main(int argc, char *argv[]) {
 
@@ -25,12 +23,15 @@ int main(int argc, char *argv[]) {
         qFatal() << "[FATAL] Too many arguments";
         return 1;
     }
+    qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-gpu");
+    qputenv("QT_OPENGL", "software");
 
     QApplication app(argc, argv);
 
-    if(Wifichecker::hasNetworkAccess())
+    if(Wifichecker::hasNetworkAccess()) {
         qInfo() << "[INFO] Network adapter found";
-
+    }
     Wifichecker checker;
     checker.checkSiteAsync("https://spotify.com", [](const bool ok){
         if(ok) qInfo() << "[INFO] spotify available";
@@ -41,37 +42,16 @@ int main(int argc, char *argv[]) {
         else qInfo() << "[INFO] youtube NOT available";
     }, 5);
 
-    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
-    const QString url = "https://youtu.be/mzfizVNCNbc?si=9kk4jxifKGRWeL9N";
+    xraycontroller xray;
+    xray.start();
 
-    PlayerAudio audio;
+    SpotifyScene spotify(rotation);
 
-    auto* player = new PlayerWindow(nullptr, &audio);
-    player->getAudio()->setCurrentlyPlaying(fileName);
-    player->getAudio()->setCurrentMediaType(MediaType::Mp3);
-
-    // Сцена
-    QGraphicsScene scene;
-    QGraphicsProxyWidget* proxy = scene.addWidget(player);
-    proxy->setRotation(rotation);  // Поворот
-
-    // После поворота сцена подгоняется под размер прокси
-    scene.setSceneRect(proxy->sceneBoundingRect());
-
-    // Вид
-    QGraphicsView view(&scene);
-    view.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view.setAlignment(Qt::AlignCenter);
-
-    // Окно без рамки
-    QMainWindow win;
-    win.setWindowFlags(Qt::FramelessWindowHint);
-    win.setCentralWidget(&view);
-    QObject::connect(player, &PlayerWindow::requestClose, &win, &QMainWindow::close);
-    // Подгоняем размер окна под содержимое
-    win.resize(proxy->sceneBoundingRect().size().toSize());
-    win.show();
-
+    QGraphicsView view;
+    view.setScene(spotify.scene());
+    view.show();
+    // main scene
+    //PlayerScene scene(rotation);
+    //scene.show();
     return QApplication::exec();
 }
