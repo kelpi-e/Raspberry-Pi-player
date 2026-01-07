@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+    <class>PlayerPage</class>
+    <widget class="QMainWindow" name="PlayerPage">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>320</width>
+                <height>240</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Playlist</string>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                    <layout class="QHBoxLayout" name="headerLayout">
+                        <item>
+                            <widget class="QLabel" name="playlistCover">
+                                <property name="minimumSize">
+                                    <size>
+                                        <width>64</width>
+                                        <height>64</height>
+                                    </size>
+                                </property>
+                                <property name="maximumSize">
+                                    <size>
+                                        <width>64</width>
+                                        <height>64</height>
+                                    </size>
+                                </property>
+                                <property name="scaledContents">
+                                    <bool>true</bool>
+                                </property>
+                            </widget>
+                        </item>
+                        <item>
+                            <widget class="QLabel" name="playlistTitle">
+                                <property name="text">
+                                    <string>Название плейлиста</string>
+                                </property>
+                                <property name="alignment">
+                                    <set>Qt::AlignVCenter|Qt::AlignLeft</set>
+                                </property>
+                            </widget>
+                        </item>
+                    </layout>
+                </item>
+
+                <item>
+                    <widget class="QTableWidget" name="trackTable">
+                        <property name="columnCount">
+                            <number>5</number>
+                        </property>
+                        <property name="rowCount">
+                            <number>0</number>
+                        </property>
+                        <attribute name="horizontalHeaderVisible">
+                            <bool>true</bool>
+                        </attribute>
+                        <attribute name="verticalHeaderVisible">
+                            <bool>false</bool>
+                        </attribute>
+                        <attribute name="horizontalHeaderStretchLastSection">
+                            <bool>false</bool>
+                        </attribute>
+                        <column>
+                            <property name="text">
+                                <string>Обл</string>
+                            </property>
+                            <property name="width">
+                                <number>32</number>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Трек</string>
+                            </property>
+                            <property name="width">
+                                <number>120</number>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Исп</string>
+                            </property>
+                            <property name="width">
+                                <number>70</number>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Src</string>
+                            </property>
+                            <property name="width">
+                                <number>32</number>
+                            </property>
+                        </column>
+                        <column>
+                            <property name="text">
+                                <string>Время</string>
+                            </property>
+                            <property name="width">
+                                <number>50</number>
+                            </property>
+                        </column>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
+</ui>

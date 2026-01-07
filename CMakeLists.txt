@@ -32,6 +32,8 @@ add_executable(Raspberry-Pi-player
         res/utils/MarqueeController.cpp
         res/utils/MarqueeController.h
         ${player_resources}
+        res/ui/PlaylistWindow.cpp
+        res/ui/PlaylistWindow.h
 )
 
 target_include_directories(Raspberry-Pi-player

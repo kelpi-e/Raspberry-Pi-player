@@ -47,11 +47,11 @@ int main(int argc, char *argv[]) {
 
     SpotifyScene spotify(rotation);
 
-    QGraphicsView view;
-    view.setScene(spotify.scene());
-    view.show();
+    //QGraphicsView view;
+    //view.setScene(spotify.scene());
+    //view.show();
     // main scene
-    //PlayerScene scene(rotation);
-    //scene.show();
+    PlayerScene scene(rotation);
+    scene.show();
     return QApplication::exec();
 }

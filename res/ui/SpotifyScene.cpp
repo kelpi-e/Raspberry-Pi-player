@@ -3,13 +3,13 @@
 #include <QWebEngineSettings>
 #include <QUrl>
 
-SpotifyScene::SpotifyScene(qreal rot, QObject* parent)
+SpotifyScene::SpotifyScene(const qreal rot, QObject* parent)
     : QObject(parent)
 {
     web = new QWebEngineView;
 
     web->setUrl(QUrl("https://open.spotify.com"));
-    web->setFixedSize(1024, 600);
+    web->setFixedSize(2560, 1600);
 
     auto* s = web->settings();
     s->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
