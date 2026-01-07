@@ -10,6 +10,6 @@ public:
     void setBinaryPath(const QString &path);
 private:
     QProcess proc;
-    QString xrayBinary = "/home/pathetic/Downloads/Xray-core/xray";
-    QString configPath = "/home/pathetic/.xray/config.json";
+    QString xrayBinary = "xray";
+    QString configPath = "~/.xray/config.json";
 };

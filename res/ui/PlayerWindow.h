@@ -22,6 +22,9 @@ public:
 
     void updateProgressRange(qint64 dur) const;
 
+    Ui::PlayerWindow getUI();
+
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 

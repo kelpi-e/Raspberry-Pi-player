@@ -1,6 +1,8 @@
 #include "PlayerScene.h"
 #include <QCoreApplication>
 
+#include "PlaylistScene.h"
+
 PlayerScene::PlayerScene(const qreal rot, QObject* parent)
     : QObject(parent),
       view(&scene)
@@ -25,6 +27,11 @@ PlayerScene::PlayerScene(const qreal rot, QObject* parent)
 
     connect(player, &PlayerWindow::requestClose,
             &window, &QMainWindow::close);
+
+    playlistScene = new PlaylistScene(rot, this);
+    connect(player->getUI().btnMenu, &QPushButton::clicked, this, [this]() {
+    view.setScene(playlistScene->getScene());
+    });
 }
 
 void PlayerScene::show() {

@@ -4,6 +4,8 @@
 #include "ui/SpotifyScene.h"
 #include <QApplication>
 
+#include "ui/PlaylistScene.h"
+
 int main(int argc, char *argv[]) {
 
     qreal rotation;
@@ -45,7 +47,7 @@ int main(int argc, char *argv[]) {
     xraycontroller xray;
     xray.start();
 
-    SpotifyScene spotify(rotation);
+    //SpotifyScene spotify(rotation);
 
     //QGraphicsView view;
     //view.setScene(spotify.scene());
@@ -53,5 +55,7 @@ int main(int argc, char *argv[]) {
     // main scene
     PlayerScene scene(rotation);
     scene.show();
+
+
     return QApplication::exec();
 }

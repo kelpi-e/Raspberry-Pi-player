@@ -91,7 +91,9 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
         ui.btnShuffle->setIcon(QIcon(":/res/ui/icons/shuffle.svg"));
         isrepeat = false;
     }
-});
+    });
+
+
 
 }
 QString msToTime(const qint64 ms) {
@@ -189,4 +191,6 @@ void PlayerWindow::updateCover() {
 PlayerAudio* PlayerWindow::getAudio() {
     return audio;
 }
+
+Ui::PlayerWindow PlayerWindow::getUI() { return ui; }
 

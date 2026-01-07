@@ -7,6 +7,7 @@
 #include <QMainWindow>
 
 #include "PlayerWindow.h"
+#include "PlaylistScene.h"
 #include "../audio/PlayerAudio.h"
 
 class PlayerScene : public QObject {
@@ -25,4 +26,7 @@ private:
     QGraphicsProxyWidget* proxy;
 
     QMainWindow window;
+
+    PlaylistScene* playlistScene{};
+
 };
