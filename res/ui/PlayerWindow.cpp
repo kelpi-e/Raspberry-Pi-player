@@ -153,7 +153,7 @@ void PlayerWindow::keyPressEvent(QKeyEvent *event) {
     }
     else if (event->key() == Qt::Key_F7) {
         if (!msg) {
-            god g("/home/roxysimp/projects/test/vocab.txt");
+            god g("../res/utils/vocab.txt");
             msg = new FullscreenMessage(
                  QString::fromStdString(g.speak())
             );
