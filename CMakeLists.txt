@@ -53,6 +53,10 @@ set(HEADERS
         res/utils/wifichecker.h
         res/utils/xraycontroller.h
         res/utils/MarqueeController.h
+        res/utils/godSays.cpp
+        res/utils/godSays.h
+        res/utils/FullscreenMessage.cpp
+        res/utils/FullscreenMessage.h
 )
 
 # Собрать исполняемый файл

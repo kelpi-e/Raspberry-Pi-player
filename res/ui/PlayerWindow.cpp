@@ -4,6 +4,9 @@
 #include <QMediaMetaData>
 #include <QTime>
 
+#include "../utils/godSays.h"
+
+
 PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
     : QWidget(parent), audio(audio)
 {
@@ -148,6 +151,19 @@ void PlayerWindow::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Down) {
         audio->setVolume(audio->getVolume() - 0.1);
     }
+    else if (event->key() == Qt::Key_F7) {
+        if (!msg) {
+            god g("/home/roxysimp/projects/test/vocab.txt");
+            msg = new FullscreenMessage(
+                 QString::fromStdString(g.speak())
+            );
+            connect(msg, &QWidget::destroyed, this, [this]() {
+                msg = nullptr;
+            });
+            msg->show();
+        }
+    }
+
 }
 
 void PlayerWindow::forwardRewind(const qint64 dt) {

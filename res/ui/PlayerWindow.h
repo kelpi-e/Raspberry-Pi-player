@@ -3,6 +3,7 @@
 #include "../audio/PlayerAudio.h"
 #include "ui_PlayerWindow.h"
 #include "../utils/timemanager.h"
+#include "../utils/FullscreenMessage.h"
 
 class PlayerWindow : public QWidget {
     Q_OBJECT
@@ -37,4 +38,6 @@ private:
     MarqueeController* titleMarquee;
     MarqueeController* artistMarquee;
     bool isrepeat = false;
+    FullscreenMessage *msg = nullptr;
+
 };

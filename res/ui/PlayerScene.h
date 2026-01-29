@@ -9,6 +9,7 @@
 #include "PlayerWindow.h"
 #include "PlaylistScene.h"
 #include "../audio/PlayerAudio.h"
+#include "../utils/godSays.h"
 
 class PlayerScene : public QObject {
     Q_OBJECT

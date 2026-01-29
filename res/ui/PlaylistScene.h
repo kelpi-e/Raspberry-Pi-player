@@ -13,8 +13,8 @@ public:
     explicit PlaylistScene(const qreal rot, QObject* parent = nullptr);
 
     QGraphicsScene* getScene();                // возвращает указатель на сцену
-    QGraphicsProxyWidget* getProxy();          // возвращает прокси виджет
-    QWidget* getWidget();                      // возвращает сам виджет плейлиста
+    QGraphicsProxyWidget* getProxy() const;          // возвращает прокси виджет
+    QWidget* getWidget() const;                      // возвращает сам виджет плейлиста
 
 private:
     QGraphicsScene scene_;                     // сама сцена
