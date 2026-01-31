@@ -12,6 +12,8 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *e) override;
 
+    void paintEvent(QPaintEvent *event);
+
 private:
     QLabel *lbl;
 };

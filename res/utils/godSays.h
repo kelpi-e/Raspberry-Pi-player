@@ -7,6 +7,9 @@
 #include <iostream>
 #include <cstring>
 #include <qlogging.h>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 
 #define const_A 214013    // 0x343FD
 #define const_C 2531011   // 0x269EC3

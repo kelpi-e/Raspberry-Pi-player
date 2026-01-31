@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include <QMediaMetaData>
 #include <QTime>
+#include <QWidget>
 
 #include "../utils/godSays.h"
 
@@ -153,7 +154,7 @@ void PlayerWindow::keyPressEvent(QKeyEvent *event) {
     }
     else if (event->key() == Qt::Key_F7) {
         if (!msg) {
-            god g("../res/utils/vocab.txt");
+            god g(":/res/vocab.txt");
             msg = new FullscreenMessage(
                  QString::fromStdString(g.speak())
             );

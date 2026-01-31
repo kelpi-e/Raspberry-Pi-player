@@ -11,24 +11,29 @@ god::god(const std::string& path) : _path(path) {
 }
 
 void god::readFile() {
-    std::ifstream fi(_path);
-
-    if (!fi.is_open()) {
+    QFile file(QString::fromStdString(_path));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "[WARNING] Cannot open dictionary file at" << QString::fromStdString(_path);
         return;
     }
 
-    std::string word;
-    while (fi >> word) {
-        lines.push_back(word);
+    QTextStream in(&file);
+    lines.clear();
+
+    while (!in.atEnd()) {
+        QString word = in.readLine().trimmed();
+        if (!word.isEmpty()) {
+            lines.push_back(word.toStdString());
+        }
     }
 
     if (lines.empty()) {
-        std::cerr << "[WARNING] Dictionary file is empty or contains no valid words." << std::endl;
+        qWarning() << "[WARNING] Dictionary file is empty or contains no valid words.";
     } else {
-        //std::cout << "[INFO] Loaded " << lines.size() << " words from dictionary." << std::endl;
+        qInfo() << "[INFO] Loaded" << lines.size() << "words from dictionary.";
     }
 
-    fi.close();
+    file.close();
 }
 
 unsigned int god::generate() {

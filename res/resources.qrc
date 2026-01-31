@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/res">
+        <!-- Префикс /res, а файлы относительно res/ -->
+        <file>vocab.txt</file>
+        <file>ui/icons/play.svg</file>
+        <file>ui/icons/pause.svg</file>
+        <file>ui/icons/menu.svg</file>
+        <file>ui/icons/shuffle.svg</file>
+        <file>ui/icons/repeat.svg</file>
+        <file>ui/icons/pref.svg</file>
+        <file>ui/icons/next.svg</file>
+        <file>ui/icons/shuffleenabled.svg</file>
+        <file>ui/icons/repeatenabled.svg</file>
+        <file>ui/icons/lightning.svg</file>
+        <file>ui/icons/bluetooth.svg</file>
+        <file>ui/icons/wifi.svg</file>
+        <file>ui/icons/nobluetooth.svg</file>
+        <file>ui/icons/nowifi.svg</file>
+        <file>ui/icons/no-cover.jpg</file>
+    </qresource>
+</RCC>

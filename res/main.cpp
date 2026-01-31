@@ -1,12 +1,22 @@
 #include "utils/wifichecker.h"
 #include "utils/xraycontroller.h"
-#include "utils/godSays.h"
 #include "ui/PlayerScene.h"
 #include <QApplication>
 #include "ui/PlaylistScene.h"
-
+#include "pch.h"
+#include <QResource>
 int main(int argc, char *argv[]) {
 
+    // Проверка существования файлов в файловой системе
+    qDebug() << "Checking files in filesystem:";
+    qDebug() << "play.svg exists:" << QFile::exists("res/ui/icons/play.svg");
+    qDebug() << "menu.svg exists:" << QFile::exists("res/ui/icons/menu.svg");
+    qDebug() << "vocab.txt exists:" << QFile::exists("res/vocab.txt");
+
+    // Проверка ресурсов
+    qDebug() << "\nChecking resources:";
+    qDebug() << ":/res/ui/icons/play.svg:" << QResource(":/res/ui/icons/play.svg").isValid();
+    qDebug() << ":/res/vocab.txt:" << QResource(":/res/vocab.txt").isValid();
 
 
     qreal rotation;
@@ -26,6 +36,7 @@ int main(int argc, char *argv[]) {
         qFatal() << "[FATAL] Too many arguments";
         return 1;
     }
+    ROTATION = rotation;
     qputenv("QTWEBENGINE_DISABLE_SANDBOX", "1");
     qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-gpu");
     qputenv("QT_OPENGL", "software");
@@ -48,7 +59,7 @@ int main(int argc, char *argv[]) {
     xraycontroller xray;
     xray.start();
 
-    PlayerScene scene(rotation);
+    PlayerScene scene(ROTATION);
     scene.show();
 
 

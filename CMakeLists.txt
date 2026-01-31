@@ -3,28 +3,19 @@ project(Raspberry-Pi-player)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)  # Включить!
 
-# Найти Qt6 компоненты
 find_package(Qt6 REQUIRED COMPONENTS
         Core
         Widgets
         Multimedia
 )
+find_package(TagLib REQUIRED)
 
-# Ресурсы
-qt_add_resources(player_resources res/ui/icons/resources.qrc)
-
-# UI файлы
-set(UI_FILES
-        res/ui/PlayerWindow.ui
-        res/ui/PlaylistWindow.ui
-)
-
-# Исходники
-set(SRC_FILES
+add_executable(Raspberry-Pi-player
         res/main.cpp
+        res/resources.qrc  # Добавить здесь
 
         res/ui/PlayerWindow.cpp
         res/ui/PlayerScene.cpp
@@ -36,43 +27,22 @@ set(SRC_FILES
         res/utils/wifichecker.cpp
         res/utils/xraycontroller.cpp
         res/utils/MarqueeController.cpp
-)
-
-# Заголовки
-set(HEADERS
-        res/ui/PlayerWindow.h
-        res/ui/PlayerScene.h
-        res/ui/PlaylistScene.h
-        res/ui/PlaylistWindow.h
-
-        res/audio/PlayerAudio.h
-
-        res/utils/wifichecker.h
-        res/utils/xraycontroller.h
-        res/utils/MarqueeController.h
         res/utils/godSays.cpp
-        res/utils/godSays.h
         res/utils/FullscreenMessage.cpp
-        res/utils/FullscreenMessage.h
+
+        res/ui/PlayerWindow.ui
+        res/ui/PlaylistWindow.ui
 )
 
-# Собрать исполняемый файл
-add_executable(Raspberry-Pi-player
-        ${SRC_FILES}
-        ${HEADERS}
-        ${UI_FILES}
-        ${player_resources}
-)
+# Убрать qt_add_resources - теперь это делает AUTORCC
 
-# Включаем директорию с сгенерированными файлами (ui_*.h)
 target_include_directories(Raspberry-Pi-player
         PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# Линковка Qt6 библиотек
 target_link_libraries(Raspberry-Pi-player
         Qt6::Core
         Qt6::Widgets
         Qt6::Multimedia
-        tag
+        TagLib::TagLib
 )
