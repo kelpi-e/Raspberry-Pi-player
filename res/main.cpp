@@ -2,7 +2,6 @@
 #include "utils/xraycontroller.h"
 #include "utils/godSays.h"
 #include "ui/PlayerScene.h"
-#include "ui/SpotifyScene.h"
 #include <QApplication>
 #include "ui/PlaylistScene.h"
 
@@ -49,12 +48,6 @@ int main(int argc, char *argv[]) {
     xraycontroller xray;
     xray.start();
 
-    //SpotifyScene spotify(rotation);
-
-    //QGraphicsView view;
-    //view.setScene(spotify.scene());
-    //view.show();
-    // main scene
     PlayerScene scene(rotation);
     scene.show();
 

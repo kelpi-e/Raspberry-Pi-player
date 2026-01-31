@@ -11,7 +11,6 @@ find_package(Qt6 REQUIRED COMPONENTS
         Core
         Widgets
         Multimedia
-        WebEngineWidgets
 )
 
 # Ресурсы
@@ -29,7 +28,6 @@ set(SRC_FILES
 
         res/ui/PlayerWindow.cpp
         res/ui/PlayerScene.cpp
-        res/ui/SpotifyScene.cpp
         res/ui/PlaylistScene.cpp
         res/ui/PlaylistWindow.cpp
 
@@ -44,7 +42,6 @@ set(SRC_FILES
 set(HEADERS
         res/ui/PlayerWindow.h
         res/ui/PlayerScene.h
-        res/ui/SpotifyScene.h
         res/ui/PlaylistScene.h
         res/ui/PlaylistWindow.h
 
@@ -77,6 +74,5 @@ target_link_libraries(Raspberry-Pi-player
         Qt6::Core
         Qt6::Widgets
         Qt6::Multimedia
-        Qt6::WebEngineWidgets
         tag
 )
