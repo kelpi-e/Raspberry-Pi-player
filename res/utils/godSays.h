@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <x86intrin.h>
+#include <chrono>
 #include <iostream>
 #include <cstring>
 #include <qlogging.h>

@@ -2,7 +2,7 @@
 
 
 god::god(const std::string& path) : _path(path) {
-    seed = __rdtsc();
+    seed = std::chrono::steady_clock::now().time_since_epoch().count();
     a = const_A;
     c = const_C;
     state = seed;
