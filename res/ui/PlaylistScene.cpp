@@ -1,24 +1,23 @@
 #include "PlaylistScene.h"
 
-PlaylistScene::PlaylistScene(const qreal rot, QObject* parent)
+PlaylistScene::PlaylistScene(qreal rot, QObject* parent)
     : QObject(parent)
 {
-    playlist_ = new PlaylistWindow;
-    playlist_->setFixedSize(240, 320);
+    wnd = new PlaylistWindow;
+    proxy = sc.addWidget(wnd);
+    proxy->setRotation(rot);
+    sc.setSceneRect(proxy->sceneBoundingRect());
 
-    proxy_ = scene_.addWidget(playlist_);
-    proxy_->setRotation(rot);
-    scene_.setSceneRect(proxy_->sceneBoundingRect());
+    connect(wnd, &PlaylistWindow::requestBack,
+            this, &PlaylistScene::requestBack);
 }
 
-QGraphicsScene* PlaylistScene::getScene() {
-    return &scene_;
+QGraphicsScene* PlaylistScene::scene()
+{
+    return &sc;
 }
 
-QGraphicsProxyWidget* PlaylistScene::getProxy() const {
-    return proxy_;
-}
-
-QWidget* PlaylistScene::getWidget() const {
-    return playlist_;
+PlaylistWindow* PlaylistScene::window()
+{
+    return wnd;
 }

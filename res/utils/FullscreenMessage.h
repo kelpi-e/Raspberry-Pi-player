@@ -1,19 +1,16 @@
 #pragma once
 #include <QWidget>
+#include "../pch.h"
 
-class QLabel;
-
-class FullscreenMessage : public QWidget
-{
+class FullscreenMessage : public QWidget {
     Q_OBJECT
 public:
     explicit FullscreenMessage(const QString& text, QWidget *parent = nullptr);
 
 protected:
-    void keyPressEvent(QKeyEvent *e) override;
-
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent*) override;
+    void keyPressEvent(QKeyEvent*) override;
 
 private:
-    QLabel *lbl;
+    QString msg;
 };

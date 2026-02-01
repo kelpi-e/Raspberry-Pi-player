@@ -2,22 +2,22 @@
 #include <QObject>
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
-#include <QWidget>
 #include "PlaylistWindow.h"
 
 class PlaylistScene : public QObject
 {
     Q_OBJECT
 public:
+    explicit PlaylistScene(qreal rot, QObject* parent = nullptr);
 
-    explicit PlaylistScene(const qreal rot, QObject* parent = nullptr);
+    QGraphicsScene* scene();
+    PlaylistWindow* window();
 
-    QGraphicsScene* getScene();                // возвращает указатель на сцену
-    QGraphicsProxyWidget* getProxy() const;          // возвращает прокси виджет
-    QWidget* getWidget() const;                      // возвращает сам виджет плейлиста
+    signals:
+        void requestBack();
 
 private:
-    QGraphicsScene scene_;                     // сама сцена
-    QGraphicsProxyWidget* proxy_{};           // прокси виджет
-    PlaylistWindow* playlist_{};              // виджет UI плейлиста
+    QGraphicsScene sc;
+    QGraphicsProxyWidget* proxy{};
+    PlaylistWindow* wnd{};
 };

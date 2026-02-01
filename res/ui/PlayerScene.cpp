@@ -1,5 +1,6 @@
 #include "PlayerScene.h"
 #include <QCoreApplication>
+#include <QMainWindow>
 
 #include "PlaylistScene.h"
 
@@ -28,11 +29,28 @@ PlayerScene::PlayerScene(const qreal rot, QObject* parent)
     connect(player, &PlayerWindow::requestClose,
             &window, &QMainWindow::close);
 
+    // ---------------- PlaylistScene ----------------
     playlistScene = new PlaylistScene(rot, this);
+
+    QList<QPair<QString, QString>> tracks = {
+        {"Track 1", "Artist 1 — 3:45"},
+        {"Track 2", "Artist 2 — 4:12"},
+        {"Track 3", "Artist 3 — 2:58"},
+        {"Track 4", "Artist 4 — 5:01"}
+    };
+
+    playlistScene->window()->setPlaylist(tracks, "Мой плейлист");
+
     connect(player->getUI().btnMenu, &QPushButton::clicked, this, [this]() {
-    view.setScene(playlistScene->getScene());
+        view.setScene(playlistScene->scene());
     });
+
+    connect(playlistScene, &PlaylistScene::requestBack, this, [this]() {
+        view.setScene(&scene);
+    });
+
 }
+
 
 void PlayerScene::show() {
     window.show();

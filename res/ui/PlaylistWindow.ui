@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
     <class>PlaylistWindow</class>
+
     <widget class="QWidget" name="PlaylistWindow">
         <property name="geometry">
             <rect>
@@ -13,229 +14,139 @@
 
         <property name="styleSheet">
             <string notr="true">
-                QWidget#PlaylistWindow {
+                QWidget {
                 background-color: #121212;
-                border-radius: 10px;
+                color: #ffffff;
+                font-family: Arial;
+                font-size: 12px;
                 }
 
                 QLabel {
-                color: #ffffff;
-                background-color: transparent;
+                background: transparent;
+                color: #eaeaea;
                 }
 
-                QLabel#lblPlaylistTitle {
-                font-size: 16px;
-                font-weight: 600;
+                QLabel.trackTitle {
+                font-size: 12px;
+                font-weight: bold;
+                }
+
+                QLabel.trackMeta {
+                font-size: 10px;
+                color: #b3b3b3;
+                }
+
+                QLabel.cover {
+                background-color: #1e1e1e;
+                border: 1px solid #2a2a2a;
+                border-radius: 6px;
                 }
 
                 QPushButton {
                 background-color: #1e1e1e;
-                color: #ffffff;
-                border: 1px solid #2a2a2a;
-                border-radius: 6px;
-                padding: 3px 4px;
-                font-size: 9px;
-                min-width: 22px;
-                min-height: 20px;
-                }
-
-                QPushButton#btnBack {
-                background-color: #1e1e1e;
-                border-color: #2a2a2a;
-                min-width: 32px;
-                min-height: 22px;
-                }
-
-                QTableWidget {
-                background-color: #1e1e1e;
-                border: none;
-                border-radius: 8px;
-                color: #ffffff;
-                gridline-color: #2a2a2a;
-                selection-background-color: #1db954;
-                selection-color: #ffffff;
-                }
-
-                QHeaderView::section {
-                background-color: #2a2a2a;
-                color: #ffffff;
-                padding: 4px;
-                border: none;
-                font-size: 10px;
-                font-weight: 600;
-                }
-
-                QLabel#lblTime {
-                font-size: 12px;
+                border: 1px solid #333;
+                border-radius: 4px;
                 color: #ffffff;
                 }
 
-                QLabel#lblBattery {
-                font-size: 12px;
-                color: #ffffff;
+                QPushButton:pressed {
+                background-color: #333;
                 }
 
+                #btnBack {
+                font-size: 16px;
+                font-weight: bold;
+                min-width: 36px;
+                max-width: 36px;
+                min-height: 28px;
+                max-height: 28px;
+                }
+
+                #lblPlaylistTitle {
+                font-size: 14px;
+                font-weight: bold;
+                }
+
+                #btnUp, #btnDown {
+                min-height: 28px;
+                max-height: 28px;
+                font-size: 14px;
+                }
             </string>
         </property>
 
-        <layout class="QVBoxLayout" name="vLay">
-            <property name="spacing"><number>8</number></property>
-            <property name="leftMargin"><number>10</number></property>
-            <property name="topMargin"><number>3</number></property>
-            <property name="rightMargin"><number>10</number></property>
-            <property name="bottomMargin"><number>10</number></property>
+        <layout class="QVBoxLayout" name="vMain">
+            <property name="spacing"><number>4</number></property>
+            <property name="leftMargin"><number>4</number></property>
+            <property name="rightMargin"><number>4</number></property>
+            <property name="topMargin"><number>4</number></property>
+            <property name="bottomMargin"><number>4</number></property>
 
-            <!-- ================= СТРОКА СТАТУСА ================= -->
+            <!-- HEADER -->
             <item>
-                <layout class="QHBoxLayout" name="hLayStatus">
-                    <property name="spacing"><number>4</number></property>
+                <layout class="QHBoxLayout">
+                    <property name="spacing"><number>6</number></property>
 
-                    <!-- Время слева -->
-                    <item>
-                        <widget class="QLabel" name="lblTime">
-                            <property name="text"><string>00:00:00</string></property>
-                        </widget>
-                    </item>
-
-                    <!-- Растягивающийся spacer -->
-                    <item>
-                        <spacer name="spacerTimeToIcons">
-                            <property name="orientation"><enum>Qt::Horizontal</enum></property>
-                            <property name="sizeHint">
-                                <size><width>20</width><height>0</height></size>
-                            </property>
-                        </spacer>
-                    </item>
-
-                    <!-- Молния -->
-                    <item>
-                        <widget class="QLabel" name="lblCharging">
-                            <property name="pixmap">
-                                <pixmap>:/res/ui/icons/lightning.svg</pixmap>
-                            </property>
-                            <property name="scaledContents"><bool>true</bool></property>
-                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="sizePolicy">
-                                <sizepolicy hsizetype="Fixed" vsizetype="Fixed"/>
-                            </property>
-                        </widget>
-                    </item>
-
-                    <!-- Процент батареи -->
-                    <item>
-                        <widget class="QLabel" name="lblBattery">
-                            <property name="text"><string>100%</string></property>
-                        </widget>
-                    </item>
-
-                    <!-- Bluetooth -->
-                    <item>
-                        <widget class="QLabel" name="lblBluetooth">
-                            <property name="pixmap">
-                                <pixmap>:/res/ui/icons/bluetooth.svg</pixmap>
-                            </property>
-                            <property name="scaledContents"><bool>true</bool></property>
-                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="sizePolicy">
-                                <sizepolicy hsizetype="Fixed" vsizetype="Fixed"/>
-                            </property>
-                        </widget>
-                    </item>
-
-                    <!-- Wi-Fi -->
-                    <item>
-                        <widget class="QLabel" name="lblWifi">
-                            <property name="pixmap">
-                                <pixmap>:/res/ui/icons/wifi.svg</pixmap>
-                            </property>
-                            <property name="scaledContents"><bool>true</bool></property>
-                            <property name="minimumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="maximumSize"><size><width>16</width><height>16</height></size></property>
-                            <property name="sizePolicy">
-                                <sizepolicy hsizetype="Fixed" vsizetype="Fixed"/>
-                            </property>
-                        </widget>
-                    </item>
-                </layout>
-            </item>
-
-            <!-- ================= ЗАГОЛОВОК С КНОПКОЙ НАЗАД ================= -->
-            <item>
-                <layout class="QHBoxLayout" name="hLayHeader">
-                    <property name="spacing"><number>8</number></property>
-
-                    <!-- Кнопка назад -->
                     <item>
                         <widget class="QPushButton" name="btnBack">
-                            <property name="text">
-                                <string>←</string>
+                            <property name="icon">
+                                <iconset resource="resources.qrc">
+                                    <normaloff>:/res/ui/icons/back.svg</normaloff>
+                                </iconset>
                             </property>
-                            <property name="minimumSize">
-                                <size>
-                                    <width>32</width>
-                                    <height>32</height>
-                                </size>
+                            <property name="iconSize">
+                                <size><width>20</width><height>20</height></size>
                             </property>
-                            <property name="maximumSize">
-                                <size>
-                                    <width>32</width>
-                                    <height>32</height>
-                                </size>
-                            </property>
+                            <property name="text"><string/></property>
                         </widget>
                     </item>
 
-                    <!-- Название плейлиста -->
                     <item>
                         <widget class="QLabel" name="lblPlaylistTitle">
                             <property name="text">
                                 <string>Плейлист</string>
                             </property>
                             <property name="alignment">
-                                <set>Qt::AlignVCenter|Qt::AlignLeft</set>
+                                <set>Qt::AlignCenter</set>
                             </property>
+                        </widget>
+
+                    </item>
+                </layout>
+            </item>
+
+            <!-- TRACKS -->
+            <item>
+                <widget class="QWidget" name="tracksContainer">
+                    <layout class="QVBoxLayout" name="vLayTracks">
+                        <property name="spacing"><number>8</number></property>
+                        <property name="leftMargin"><number>0</number></property>
+                        <property name="rightMargin"><number>0</number></property>
+                        <property name="topMargin"><number>0</number></property>
+                        <property name="bottomMargin"><number>0</number></property>
+                    </layout>
+                </widget>
+            </item>
+
+            <!-- NAVIGATION -->
+            <item>
+                <layout class="QHBoxLayout">
+                    <property name="spacing"><number>4</number></property>
+
+                    <item>
+                        <widget class="QPushButton" name="btnUp">
+                            <property name="text"><string>▲</string></property>
+                        </widget>
+                    </item>
+
+                    <item>
+                        <widget class="QPushButton" name="btnDown">
+                            <property name="text"><string>▼</string></property>
                         </widget>
                     </item>
                 </layout>
             </item>
 
-            <!-- ================= ТАБЛИЦА ТРЕКОВ ================= -->
-            <item>
-                <widget class="QTableWidget" name="tblTracks">
-                    <property name="columnCount">
-                        <number>3</number>
-                    </property>
-                    <property name="rowCount">
-                        <number>0</number>
-                    </property>
-                    <property name="selectionBehavior">
-                        <enum>QAbstractItemView::SelectRows</enum>
-                    </property>
-                    <property name="showGrid">
-                        <bool>false</bool>
-                    </property>
-                    <property name="alternatingRowColors">
-                        <bool>true</bool>
-                    </property>
-                    <column>
-                        <property name="text">
-                            <string>Трек</string>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Исполнитель</string>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Время</string>
-                        </property>
-                    </column>
-                </widget>
-            </item>
         </layout>
     </widget>
 
