@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}{{ playlist.name }}{% endblock %}
+{% block content %}
+  <div style="margin-bottom: 20px;">
+    <a href="{% url 'playlists:index' %}" class="muted" style="font-size: 13px;">← К списку</a>
+  </div>
+
+  <form id="playlist-form" method="post" action="{% url 'playlists:playlist_save' playlist_id=playlist.id %}">
+    {% csrf_token %}
+    <div class="card" style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 12px;">Название плейлиста</label>
+      <input type="text" name="name" value="{{ playlist.name }}" id="playlist-name" style="font-size: 18px; font-weight: 500;">
+      <input type="hidden" name="tracks" id="tracks-json" value="">
+    </div>
+    <button type="submit" class="btn btn-primary" id="btn-save">Сохранить</button>
+  </form>
+
+  {% if add_error %}
+    <div class="card" style="margin-top: 16px; border-color: var(--danger); color: var(--danger);">{{ add_error }}</div>
+  {% endif %}
+  <div class="card" style="margin-top: 24px;">
+    <h3 style="margin: 0 0 16px 0; font-size: 16px;">Добавить трек</h3>
+    <form action="{% url 'playlists:playlist_add_track' playlist_id=playlist.id %}" method="post" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+      {% csrf_token %}
+      <div style="flex: 1; min-width: 200px;">
+        <label class="muted" style="font-size: 12px;">Ссылка (Spotify / YouTube)</label>
+        <input type="url" name="url" placeholder="https://open.spotify.com/... или https://youtube.com/..." style="margin-top: 4px;">
+      </div>
+      <div>
+        <label class="muted" style="font-size: 12px;">или MP3 файл</label>
+        <input type="file" name="mp3" accept=".mp3" style="margin-top: 4px; color: var(--text-muted);">
+      </div>
+      <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+  </div>
+
+  <h3 style="margin: 24px 0 12px 0; font-size: 16px;">Треки ({{ playlist.tracks|length }}) <span class="muted" style="font-size: 12px; font-weight: normal;">— перетащите за ручку для смены порядка</span></h3>
+  <div id="tracks-list">
+    {% for track in playlist.tracks %}
+      <div class="track-row card" data-index="{{ forloop.counter0 }}" style="display: grid; grid-template-columns: 28px 56px 1fr auto; gap: 12px; align-items: start;">
+        <div class="track-drag-handle" draggable="true" title="Перетащите для смены порядка" style="cursor: grab; padding: 8px 4px; color: var(--text-muted); font-size: 16px; line-height: 56px; text-align: center; user-select: none;">⋮⋮</div>
+        <div class="track-cover" style="width: 56px; height: 56px; border-radius: var(--radius); overflow: hidden; background: var(--bg-tertiary);">
+          {% if track.cover_url %}
+            <img src="{{ track.cover_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">
+          {% endif %}
+        </div>
+        <div style="min-width: 0;">
+          <input type="text" class="track-name" placeholder="Название" value="{{ track.name }}" data-field="name" style="font-weight: 500; margin-bottom: 4px;">
+          <input type="text" class="track-artist" placeholder="Исполнитель" value="{{ track.artist }}" data-field="artist" style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">
+          <input type="text" class="track-duration" placeholder="0:00" value="{{ track.duration }}" data-field="duration" style="width: 80px; font-size: 12px;">
+          <input type="text" class="track-path" placeholder="path / URL" value="{{ track.path }}" data-field="path" style="font-size: 12px; margin-top: 4px;" title="Путь к файлу или ссылка">
+          <input type="text" class="track-cover-inp" placeholder="обложка" value="{{ track.cover }}" data-field="cover" style="font-size: 11px; margin-top: 2px; display: none;">
+        </div>
+        <input type="hidden" class="track-type" data-field="type" value="{{ track.type|default:'mp3' }}">
+        <button type="button" class="btn btn-danger track-remove" style="margin-top: 4px;">Удалить</button>
+      </div>
+    {% empty %}
+      <p class="muted">Нет треков. Добавьте по ссылке или загрузите MP3.</p>
+    {% endfor %}
+  </div>
+
+  <form id="remove-form" method="post" action="{% url 'playlists:playlist_remove_track' playlist_id=playlist.id %}" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="index" id="remove-index" value="">
+  </form>
+{% endblock %}
+
+{% block extra_css %}
+  .track-row input { margin-bottom: 0; }
+  .track-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .track-drag-handle:active { cursor: grabbing; }
+  .track-row.drag-over { border-color: var(--accent); background: var(--bg-tertiary); }
+  .track-row.dragging { opacity: 0.5; }
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    (function() {
+      var form = document.getElementById('playlist-form');
+      var tracksJson = document.getElementById('tracks-json');
+      var playlistName = document.getElementById('playlist-name');
+      var removeForm = document.getElementById('remove-form');
+      var removeIndex = document.getElementById('remove-index');
+
+      function getTracksData() {
+        var rows = document.querySelectorAll('.track-row');
+        var tracks = [];
+        rows.forEach(function(row) {
+          var t = {
+            type: (row.querySelector('.track-type') || {}).value || 'mp3',
+            name: (row.querySelector('.track-name') || {}).value || '',
+            artist: (row.querySelector('.track-artist') || {}).value || '',
+            duration: (row.querySelector('.track-duration') || {}).value || '0:00',
+            path: (row.querySelector('.track-path') || {}).value || '',
+            cover: (row.querySelector('.track-cover-inp') || {}).value || ''
+          };
+          tracks.push(t);
+        });
+        return tracks;
+      }
+
+      form.addEventListener('submit', function(e) {
+        tracksJson.value = JSON.stringify(getTracksData());
+      });
+
+      document.getElementById('tracks-list').addEventListener('click', function(e) {
+        var btn = e.target.closest('.track-remove');
+        if (!btn) return;
+        e.preventDefault();
+        var row = btn.closest('.track-row');
+        var idx = row.getAttribute('data-index');
+        removeIndex.value = idx;
+        removeForm.submit();
+      });
+
+      // Drag and drop reorder
+      var listEl = document.getElementById('tracks-list');
+      var draggedRow = null;
+
+      listEl.addEventListener('dragstart', function(e) {
+        var handle = e.target.closest('.track-drag-handle');
+        if (!handle) return;
+        draggedRow = handle.closest('.track-row');
+        if (!draggedRow) return;
+        e.dataTransfer.setData('text/plain', draggedRow.getAttribute('data-index'));
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setDragImage(draggedRow, 20, 30);
+        draggedRow.classList.add('dragging');
+      });
+
+      listEl.addEventListener('dragend', function(e) {
+        if (draggedRow) {
+          draggedRow.classList.remove('dragging');
+          listEl.querySelectorAll('.track-row').forEach(function(r) { r.classList.remove('drag-over'); });
+          draggedRow = null;
+        }
+      });
+
+      listEl.addEventListener('dragover', function(e) {
+        var row = e.target.closest('.track-row');
+        if (!row || row === draggedRow) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        listEl.querySelectorAll('.track-row').forEach(function(r) { r.classList.remove('drag-over'); });
+        row.classList.add('drag-over');
+      });
+
+      listEl.addEventListener('dragleave', function(e) {
+        if (!e.target.closest('.track-row')) return;
+        var row = e.target.closest('.track-row');
+        if (!listEl.contains(e.relatedTarget) || !e.relatedTarget.closest('.track-row')) {
+          row.classList.remove('drag-over');
+        }
+      });
+
+      listEl.addEventListener('drop', function(e) {
+        var targetRow = e.target.closest('.track-row');
+        if (!targetRow || !draggedRow || targetRow === draggedRow) return;
+        e.preventDefault();
+        targetRow.classList.remove('drag-over');
+        targetRow.parentNode.insertBefore(draggedRow, targetRow);
+        listEl.querySelectorAll('.track-row').forEach(function(r, i) {
+          r.setAttribute('data-index', i);
+        });
+      });
+    })();
+  </script>
+{% endblock %}

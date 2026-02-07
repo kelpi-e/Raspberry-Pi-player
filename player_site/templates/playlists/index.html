@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Плейлисты{% endblock %}
+{% block content %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Мои плейлисты</h2>
+    <form action="{% url 'playlists:playlist_create' %}" method="post" style="display: flex; gap: 8px;">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="Название плейлиста" style="width: 240px;">
+      <button type="submit" class="btn btn-primary">Создать</button>
+    </form>
+  </div>
+  {% if playlists %}
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      {% for pl in playlists %}
+        <li class="card" style="display: flex; align-items: center; justify-content: space-between;">
+          <a href="{% url 'playlists:playlist_edit' playlist_id=pl.id %}" style="flex: 1; color: var(--text); text-decoration: none;">
+            <span style="font-weight: 500;">{{ pl.name }}</span>
+            <span class="muted" style="margin-left: 8px;">{{ pl.track_count }} треков</span>
+          </a>
+          <form action="{% url 'playlists:playlist_delete' playlist_id=pl.id %}" method="post" style="margin: 0;" onsubmit="return confirm('Удалить плейлист?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Удалить</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">Плейлистов пока нет. Создайте первый.</p>
+  {% endif %}
+{% endblock %}
