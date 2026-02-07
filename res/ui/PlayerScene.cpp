@@ -8,7 +8,7 @@ PlayerScene::PlayerScene(const qreal rot, QObject* parent)
     : QObject(parent),
       view(&scene)
 {
-    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/2.mp3";
+    const QString fileName = QCoreApplication::applicationDirPath() + "/../res/music/mp3/2.mp3";
     player = new PlayerWindow(nullptr, &audio);
 
     audio.setCurrentlyPlaying(fileName);

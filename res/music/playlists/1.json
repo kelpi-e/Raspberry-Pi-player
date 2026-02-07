@@ -1,0 +1,16 @@
+{
+  "playlist": {
+    "name": "playlist1",
+    "tracks": [
+
+      {
+        "type": "mp3",
+        "name": "name2",
+        "artist": "artist2",
+        "duration": "34:56",
+        "path": "/../res/music/mp3/2.mp3",
+        "cover": "/../res/ui/icons/default.svg"
+      }
+    ]
+  }
+}
