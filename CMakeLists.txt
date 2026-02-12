@@ -4,7 +4,7 @@ project(Raspberry-Pi-player)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)  # Включить!
+set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS
         Core
