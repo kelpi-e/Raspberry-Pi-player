@@ -132,18 +132,34 @@ cat << 'EOF' > run_python.sh
 #!/bin/bash
 set -e
 
-cd web-interface || {
-    echo "web-interface folder not found"
-    exit 1
-}
+WEB_DIR="web-interface"
+DJANGO_DIR="player_site"
 
+# Переходим в web-interface
+cd "$WEB_DIR" || { echo "Folder '$WEB_DIR' not found"; exit 1; }
+
+# Проверяем виртуальное окружение
 if [ ! -d ".venv" ]; then
     echo "Virtual environment not found. Run setup first."
     exit 1
 fi
 
+# Активируем окружение
 source .venv/bin/activate
-python main.py
+
+# Переходим в Django-проект
+cd "$DJANGO_DIR" || { echo "Folder '$DJANGO_DIR' not found"; deactivate; exit 1; }
+
+# Применяем миграции
+echo "Applying Django migrations..."
+python manage.py migrate
+
+# Запускаем сервер
+echo "Starting Django server on 0.0.0.0:8000..."
+python manage.py runserver 0.0.0.0:8000
+
+# После завершения
+deactivate
 EOF
 
 chmod +x run_python.sh
