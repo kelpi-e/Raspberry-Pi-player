@@ -186,23 +186,37 @@ void PlayerWindow::updateCover() {
     QVariant thumb = md.value(QMediaMetaData::ThumbnailImage);
     if (!thumb.isNull()) {
         auto img = thumb.value<QImage>();
-        ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
-            180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation
-        ));
+        QPixmap pixmap = QPixmap::fromImage(img).scaled(
+            170, 170, Qt::KeepAspectRatio, Qt::SmoothTransformation
+        );
+        ui.lblCover->setPixmap(pixmap);
+        ui.lblCover->setAlignment(Qt::AlignCenter);
         return;
     }
 
     QVariant cover = md.value(QMediaMetaData::CoverArtImage);
     if (!cover.isNull()) {
         auto img = cover.value<QImage>();
-        ui.lblCover->setPixmap(QPixmap::fromImage(img).scaled(
-            180, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation
-        ));
+        QPixmap pixmap = QPixmap::fromImage(img).scaled(
+            170, 170, Qt::KeepAspectRatio, Qt::SmoothTransformation
+        );
+        ui.lblCover->setPixmap(pixmap);
+        ui.lblCover->setAlignment(Qt::AlignCenter);
         return;
     }
 
-    ui.lblCover->setPixmap(QPixmap());
-    ui.lblCover->setText("Нет обложки");
+    // Устанавливаем дефолтную обложку, если нет метаданных
+    QPixmap defaultCover = QPixmap(":/res/ui/icons/default.svg");
+    if (!defaultCover.isNull()) {
+        defaultCover = defaultCover.scaled(
+            170, 170, Qt::KeepAspectRatio, Qt::SmoothTransformation
+        );
+        ui.lblCover->setPixmap(defaultCover);
+    } else {
+        ui.lblCover->setPixmap(QPixmap());
+        ui.lblCover->setText("Нет обложки");
+    }
+    ui.lblCover->setAlignment(Qt::AlignCenter);
 }
 
 PlayerAudio* PlayerWindow::getAudio() {

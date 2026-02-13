@@ -25,9 +25,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     ROTATION = rotation;
-    /*("QTWEBENGINE_DISABLE_SANDBOX", "1");
-    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox --disable-gpu");
-    qputenv("QT_OPENGL", "software");*/
 
     QApplication app(argc, argv);
 
