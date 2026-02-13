@@ -149,9 +149,29 @@ class MetadataExtractor:
                 elif img.mode != 'RGB':
                     img = img.convert('RGB')
 
-                # Изменяем размер с сохранением пропорций
+                # Приводим к формату 500x500 (квадрат)
                 if self.cover_resize_size != (0, 0):
-                    img.thumbnail(self.cover_resize_size, Image.Resampling.LANCZOS)
+                    target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
+                    # Масштабируем так, чтобы меньшая сторона была равна target_size
+                    width, height = img.size
+                    if width < height:
+                        # Вертикальное изображение - масштабируем по ширине
+                        new_width = target_size
+                        new_height = int(height * (target_size / width))
+                    else:
+                        # Горизонтальное или квадратное - масштабируем по высоте
+                        new_height = target_size
+                        new_width = int(width * (target_size / height))
+                    
+                    # Масштабируем изображение
+                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                    
+                    # Обрезаем до квадрата по центру
+                    left = (new_width - target_size) // 2
+                    top = (new_height - target_size) // 2
+                    right = left + target_size
+                    bottom = top + target_size
+                    img = img.crop((left, top, right, bottom))
 
                 # Сохраняем
                 img.save(save_path, 'JPEG', quality=90, optimize=True)
@@ -215,9 +235,29 @@ class MetadataExtractor:
                 elif img.mode != 'RGB':
                     img = img.convert('RGB')
 
-                # Изменяем размер с сохранением пропорций
+                # Приводим к формату 500x500 (квадрат)
                 if self.cover_resize_size != (0, 0):
-                    img.thumbnail(self.cover_resize_size, Image.Resampling.LANCZOS)
+                    target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
+                    # Масштабируем так, чтобы меньшая сторона была равна target_size
+                    width, height = img.size
+                    if width < height:
+                        # Вертикальное изображение - масштабируем по ширине
+                        new_width = target_size
+                        new_height = int(height * (target_size / width))
+                    else:
+                        # Горизонтальное или квадратное - масштабируем по высоте
+                        new_height = target_size
+                        new_width = int(width * (target_size / height))
+                    
+                    # Масштабируем изображение
+                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                    
+                    # Обрезаем до квадрата по центру
+                    left = (new_width - target_size) // 2
+                    top = (new_height - target_size) // 2
+                    right = left + target_size
+                    bottom = top + target_size
+                    img = img.crop((left, top, right, bottom))
 
                 # Сохраняем
                 img.save(save_path, 'JPEG', quality=90, optimize=True)

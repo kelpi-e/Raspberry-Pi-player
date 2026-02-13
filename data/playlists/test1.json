@@ -1,0 +1,53 @@
+{
+  "name": "test1",
+  "tracks": [
+    {
+      "type": "spotify",
+      "name": "Plainsong - Remastered",
+      "artist": "The Cure",
+      "duration": "05:17",
+      "path": "https://open.spotify.com/track/365szpO2WuWZv6Y49XcONh?si=63785a17b8b44b7c",
+      "cover": "downloaded_covers/The_Cure_Plainsong_-_Remastered_cf8ea522.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Pictures Of You - Remastered",
+      "artist": "The Cure",
+      "duration": "07:28",
+      "path": "https://open.spotify.com/track/72gg0bqrLCCyomkfunyiuU?si=67995ad69ed842f5",
+      "cover": "downloaded_covers/The_Cure_Pictures_Of_You_-_Remastered_cf8ea522.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Realize",
+      "artist": "Trxy!",
+      "duration": "01:55",
+      "path": "https://open.spotify.com/track/51RriaGnB6VILb54rXHKj8?si=f3cb16da699b4a3b",
+      "cover": "downloaded_covers/Trxy!_Realize_780f10ec.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Pictures Of You - Remastered",
+      "artist": "The Cure",
+      "duration": "07:28",
+      "path": "https://open.spotify.com/track/72gg0bqrLCCyomkfunyiuU?si=67995ad69ed842f5",
+      "cover": "downloaded_covers/The_Cure_Pictures_Of_You_-_Remastered_cf8ea522.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Lying from You",
+      "artist": "Linkin Park",
+      "duration": "02:55",
+      "path": "https://open.spotify.com/track/4qVR3CF8FuFvHN4L6vXlB1?si=f873969179864eb4",
+      "cover": "downloaded_covers/Linkin_Park_Lying_from_You_86e16216.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Closedown - Remastered 2010",
+      "artist": "The Cure",
+      "duration": "04:18",
+      "path": "https://open.spotify.com/track/0WVwKob5LPld3ywrxcHJnE?si=fe062e3433ec4e81",
+      "cover": "downloaded_covers/The_Cure_Closedown_-_Remastered_2010_cf8ea522.jpg"
+    }
+  ]
+}

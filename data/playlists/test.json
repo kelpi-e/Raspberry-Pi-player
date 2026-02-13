@@ -1,0 +1,29 @@
+{
+  "name": "test",
+  "tracks": [
+    {
+      "type": "youtube",
+      "name": "Cерега Пират псевдокавер where is my mind",
+      "artist": "Antyradost' ",
+      "duration": "01:00",
+      "path": "https://www.youtube.com/watch?v=aZWWlqDy8nE",
+      "cover": "downloaded_covers/Antyradost'_Cерега_Пират_псевдокавер_where_is_my_mind_807421a0.jpg"
+    },
+    {
+      "type": "mp3",
+      "name": "Luv (sic)",
+      "artist": "Nujabes",
+      "duration": "04:49",
+      "path": "mp3/luv_sic_spotdownorgmp3.mp3",
+      "cover": "C:\\Users\\al_ru\\PycharmProjects\\Playerserver\\downloaded_covers\\Nujabes_Luv_(sic)_f98b57cb.jpg"
+    },
+    {
+      "type": "spotify",
+      "name": "Put You Down - Live",
+      "artist": "Alice In Chains",
+      "duration": "03:18",
+      "path": "https://open.spotify.com/track/4mysT0mJkt1BFG6G8El1hC?si=8b6aa57538e7466b",
+      "cover": "downloaded_covers/Alice_In_Chains_Put_You_Down_-_Live_24c1511a.jpg"
+    }
+  ]
+}

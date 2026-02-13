@@ -107,8 +107,14 @@
         var btn = e.target.closest('.track-remove');
         if (!btn) return;
         e.preventDefault();
+        e.stopPropagation();
         var row = btn.closest('.track-row');
-        var idx = row.getAttribute('data-index');
+        if (!row) return;
+        var idx = parseInt(row.getAttribute('data-index'), 10);
+        if (isNaN(idx) || idx < 0) {
+          console.error('Invalid track index:', idx);
+          return;
+        }
         removeIndex.value = idx;
         removeForm.submit();
       });

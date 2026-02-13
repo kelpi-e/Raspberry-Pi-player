@@ -146,14 +146,27 @@ def playlist_remove_track(request, playlist_id):
     """Remove track by index (0-based)."""
     pl = services.load_playlist(playlist_id)
     if not pl:
-        return JsonResponse({'error': 'Not found'}, status=404)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Not found'}, status=404)
+        return redirect('playlists:index')
+    
+    # Получаем индекс из POST или JSON body
+    index = -1
     try:
-        index = int(request.POST.get('index', request.body and json.loads(request.body).get('index', -1)))
-    except (TypeError, ValueError, json.JSONDecodeError):
+        if request.POST.get('index'):
+            index = int(request.POST.get('index'))
+        elif request.content_type and 'json' in request.content_type and request.body:
+            data = json.loads(request.body)
+            index = int(data.get('index', -1))
+    except (TypeError, ValueError, json.JSONDecodeError) as e:
+        print(f"Error parsing index: {e}")
         index = -1
+    
+    # Удаляем трек если индекс валидный
     if 0 <= index < len(pl['tracks']):
         pl['tracks'].pop(index)
         services.save_playlist(playlist_id, pl['name'], pl['tracks'])
+    
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         pl2 = services.load_playlist(playlist_id)
         return JsonResponse({'ok': True, 'tracks': pl2['tracks']})
