@@ -57,7 +57,11 @@ fi
 rm -rf build
 
 cmake -S main -B build
-cmake --build build -j$(nproc)
+if [[ $(uname -m) == arm* || $(uname -m) == aarch64 ]]; then
+    cmake --build build -j2
+else
+    cmake --build build -j$(nproc)
+fi
 
 APP_PATH="build/Raspberry-Pi-player"
 
