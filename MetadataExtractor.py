@@ -1,18 +1,22 @@
-from MediaTypes import MediaType
 import os
 import json
-from pathlib import Path
-import mutagen
-from mutagen.mp3 import MP3
-from mutagen.id3 import ID3, APIC, TIT2, TPE1, TALB
-from typing import Dict, Any, Optional, List
-import base64
-from io import BytesIO
-import yt_dlp
-import requests
-from urllib.parse import urlparse, parse_qs
 import hashlib
 import re
+import requests
+import yt_dlp
+from io import BytesIO
+from pathlib import Path
+from typing import Dict, Any, Optional, List
+from urllib.parse import urlparse
+
+from MediaTypes import MediaType
+
+try:
+    from PIL import Image
+    PILLOW_AVAILABLE = True
+except ImportError:
+    PILLOW_AVAILABLE = False
+    Image = None
 
 
 class MetadataExtractor:
@@ -132,62 +136,59 @@ class MetadataExtractor:
             response.raise_for_status()
 
             # Пробуем изменить размер если установлен Pillow
-            try:
-                from PIL import Image
+            if PILLOW_AVAILABLE:
+                try:
+                    # Открываем изображение из байтов
+                    img = Image.open(BytesIO(response.content))
 
-                # Открываем изображение из байтов
-                img = Image.open(BytesIO(response.content))
+                    # Преобразуем в RGB если нужно
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        # Создаем белый фон для изображений с прозрачностью
+                        rgb_img = Image.new('RGB', img.size, (0, 0, 0))
+                        if img.mode == 'P':
+                            img = img.convert('RGBA')
+                        rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                        img = rgb_img
+                    elif img.mode != 'RGB':
+                        img = img.convert('RGB')
 
-                # Преобразуем в RGB если нужно
-                if img.mode in ('RGBA', 'LA', 'P'):
-                    # Создаем белый фон для изображений с прозрачностью
-                    rgb_img = Image.new('RGB', img.size, (0, 0, 0))
-                    if img.mode == 'P':
-                        img = img.convert('RGBA')
-                    rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
-                    img = rgb_img
-                elif img.mode != 'RGB':
-                    img = img.convert('RGB')
+                    # Приводим к формату 500x500 (квадрат)
+                    if self.cover_resize_size != (0, 0):
+                        target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
+                        # Масштабируем так, чтобы меньшая сторона была равна target_size
+                        width, height = img.size
+                        if width < height:
+                            # Вертикальное изображение - масштабируем по ширине
+                            new_width = target_size
+                            new_height = int(height * (target_size / width))
+                        else:
+                            # Горизонтальное или квадратное - масштабируем по высоте
+                            new_height = target_size
+                            new_width = int(width * (target_size / height))
 
-                # Приводим к формату 500x500 (квадрат)
-                if self.cover_resize_size != (0, 0):
-                    target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
-                    # Масштабируем так, чтобы меньшая сторона была равна target_size
-                    width, height = img.size
-                    if width < height:
-                        # Вертикальное изображение - масштабируем по ширине
-                        new_width = target_size
-                        new_height = int(height * (target_size / width))
-                    else:
-                        # Горизонтальное или квадратное - масштабируем по высоте
-                        new_height = target_size
-                        new_width = int(width * (target_size / height))
-                    
-                    # Масштабируем изображение
-                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                    
-                    # Обрезаем до квадрата по центру
-                    left = (new_width - target_size) // 2
-                    top = (new_height - target_size) // 2
-                    right = left + target_size
-                    bottom = top + target_size
-                    img = img.crop((left, top, right, bottom))
+                        # Масштабируем изображение
+                        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-                # Сохраняем
-                img.save(save_path, 'JPEG', quality=90, optimize=True)
+                        # Обрезаем до квадрата по центру
+                        left = (new_width - target_size) // 2
+                        top = (new_height - target_size) // 2
+                        right = left + target_size
+                        bottom = top + target_size
+                        img = img.crop((left, top, right, bottom))
 
-                print(f"[OK] Обложка сохранена {img.size[0]}x{img.size[1]}: {save_path}")
+                    # Сохраняем
+                    img.save(save_path, 'JPEG', quality=90, optimize=True)
 
-            except ImportError:
+                    print(f"[OK] Обложка сохранена {img.size[0]}x{img.size[1]}: {save_path}")
+
+                except Exception as pillow_error:
+                    print(f"[!] Ошибка при обработке изображения: {pillow_error}")
+                    with open(save_path, 'wb') as f:
+                        f.write(response.content)
+            else:
                 # Если Pillow не установлен, сохраняем как есть
                 print("[!] Pillow не установлен. Сохраняю обложку без изменения размера.")
                 print("Установите: pip install pillow")
-                with open(save_path, 'wb') as f:
-                    f.write(response.content)
-
-            except Exception as pillow_error:
-                # Если ошибка при обработке изображения, сохраняем как есть
-                print(f"[!] Ошибка при обработке изображения: {pillow_error}")
                 with open(save_path, 'wb') as f:
                     f.write(response.content)
 
@@ -218,62 +219,59 @@ class MetadataExtractor:
             save_path = os.path.join(self.covers_dir, filename)
 
             # Пробуем изменить размер если установлен Pillow
-            try:
-                from PIL import Image
+            if PILLOW_AVAILABLE:
+                try:
+                    # Открываем изображение из байтов
+                    img = Image.open(BytesIO(image_bytes))
 
-                # Открываем изображение из байтов
-                img = Image.open(BytesIO(image_bytes))
+                    # Преобразуем в RGB если нужно
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        # Создаем белый фон для изображений с прозрачностью
+                        rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                        if img.mode == 'P':
+                            img = img.convert('RGBA')
+                        rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                        img = rgb_img
+                    elif img.mode != 'RGB':
+                        img = img.convert('RGB')
 
-                # Преобразуем в RGB если нужно
-                if img.mode in ('RGBA', 'LA', 'P'):
-                    # Создаем белый фон для изображений с прозрачностью
-                    rgb_img = Image.new('RGB', img.size, (255, 255, 255))
-                    if img.mode == 'P':
-                        img = img.convert('RGBA')
-                    rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
-                    img = rgb_img
-                elif img.mode != 'RGB':
-                    img = img.convert('RGB')
+                    # Приводим к формату 500x500 (квадрат)
+                    if self.cover_resize_size != (0, 0):
+                        target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
+                        # Масштабируем так, чтобы меньшая сторона была равна target_size
+                        width, height = img.size
+                        if width < height:
+                            # Вертикальное изображение - масштабируем по ширине
+                            new_width = target_size
+                            new_height = int(height * (target_size / width))
+                        else:
+                            # Горизонтальное или квадратное - масштабируем по высоте
+                            new_height = target_size
+                            new_width = int(width * (target_size / height))
 
-                # Приводим к формату 500x500 (квадрат)
-                if self.cover_resize_size != (0, 0):
-                    target_size = self.cover_resize_size[0]  # Используем ширину как размер квадрата
-                    # Масштабируем так, чтобы меньшая сторона была равна target_size
-                    width, height = img.size
-                    if width < height:
-                        # Вертикальное изображение - масштабируем по ширине
-                        new_width = target_size
-                        new_height = int(height * (target_size / width))
-                    else:
-                        # Горизонтальное или квадратное - масштабируем по высоте
-                        new_height = target_size
-                        new_width = int(width * (target_size / height))
-                    
-                    # Масштабируем изображение
-                    img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                    
-                    # Обрезаем до квадрата по центру
-                    left = (new_width - target_size) // 2
-                    top = (new_height - target_size) // 2
-                    right = left + target_size
-                    bottom = top + target_size
-                    img = img.crop((left, top, right, bottom))
+                        # Масштабируем изображение
+                        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-                # Сохраняем
-                img.save(save_path, 'JPEG', quality=90, optimize=True)
+                        # Обрезаем до квадрата по центру
+                        left = (new_width - target_size) // 2
+                        top = (new_height - target_size) // 2
+                        right = left + target_size
+                        bottom = top + target_size
+                        img = img.crop((left, top, right, bottom))
 
-                print(f"[OK] Обложка MP3 сохранена {img.size[0]}x{img.size[1]}: {save_path}")
+                    # Сохраняем
+                    img.save(save_path, 'JPEG', quality=90, optimize=True)
 
-            except ImportError:
+                    print(f"[OK] Обложка MP3 сохранена {img.size[0]}x{img.size[1]}: {save_path}")
+
+                except Exception as pillow_error:
+                    print(f"[!] Ошибка при обработке изображения MP3: {pillow_error}")
+                    with open(save_path, 'wb') as f:
+                        f.write(image_bytes)
+            else:
                 # Если Pillow не установлен, сохраняем как есть
                 print("[!] Pillow не установлен. Сохраняю обложку MP3 без изменения размера.")
                 print("Установите: pip install pillow")
-                with open(save_path, 'wb') as f:
-                    f.write(image_bytes)
-
-            except Exception as pillow_error:
-                # Если ошибка при обработке изображения, сохраняем как есть
-                print(f"[!] Ошибка при обработке изображения MP3: {pillow_error}")
                 with open(save_path, 'wb') as f:
                     f.write(image_bytes)
 
@@ -283,14 +281,13 @@ class MetadataExtractor:
             print(f"[ERR] Ошибка при сохранении обложки MP3 из байтов: {e}")
             return self.default_cover_path
 
+    # ========== Извлечение метаданных из MP3 ==========
     def _extract_mp3(self, file_path: str) -> Dict[str, Any]:
-        """
-        Извлекает метаданные из MP3 файла.
-        Возвращает 6 полей: type, name, artist, duration, path, cover
-        И добавляет error если есть ошибка
-        """
+        """Извлекает метаданные из MP3 файла."""
         try:
-            # Проверяем существование файла
+            from mutagen.mp3 import MP3
+            from mutagen.id3 import ID3, APIC, TIT2, TPE1
+
             if not os.path.exists(file_path):
                 return {
                     "type": "mp3",
@@ -302,64 +299,33 @@ class MetadataExtractor:
                     "error": "File not found"
                 }
 
-            # Загружаем аудиофайл
             audio = MP3(file_path, ID3=ID3)
-
-            # Получаем базовую информацию
             duration_seconds = audio.info.length if hasattr(audio.info, 'length') else 0
-
-            # Конвертируем секунды в формат MM:SS
             minutes = int(duration_seconds // 60)
             seconds = int(duration_seconds % 60)
             duration_formatted = f"{minutes:02d}:{seconds:02d}"
 
-            # Извлекаем теги
             name = None
             artist = None
 
-            # Пытаемся получить название из тегов
-            try:
-                if 'TIT2' in audio:
-                    name = str(audio['TIT2'])
-                elif 'TIT1' in audio:
-                    name = str(audio['TIT1'])
-            except:
-                name = None
-
-            # Если название не найдено, используем имя файла без расширения
+            if 'TIT2' in audio:
+                name = str(audio['TIT2'])
             if not name:
                 name = os.path.splitext(os.path.basename(file_path))[0]
 
-            # Пытаемся получить исполнителя
-            try:
-                if 'TPE1' in audio:
-                    artist = str(audio['TPE1'])  # Lead performer/soloist
-                elif 'TPE2' in audio:
-                    artist = str(audio['TPE2'])  # Band/orchestra/accompaniment
-                elif 'TPE3' in audio:
-                    artist = str(audio['TPE3'])  # Conductor
-            except:
-                artist = None
-
-            # Если исполнитель не найден, используем "Unknown"
+            if 'TPE1' in audio:
+                artist = str(audio['TPE1'])
             if not artist:
                 artist = "Unknown"
 
-            # Ищем обложку в тегах и сохраняем с изменением размера
             cover_path = self.default_cover_path
+            if audio.tags:
+                for tag in audio.tags.values():
+                    if isinstance(tag, APIC):
+                        cover_data = tag.data
+                        cover_path = self._save_cover_from_bytes(cover_data, name, artist)
+                        break
 
-            try:
-                # Проверяем наличие обложек в тегах
-                if audio.tags:
-                    for tag in audio.tags.values():
-                        if isinstance(tag, APIC):
-                            cover_data = tag.data
-                            cover_path = self._save_cover_from_bytes(cover_data, name, artist)
-                            break
-            except Exception as e:
-                print(f"Ошибка при извлечении обложки MP3: {e}")
-
-            # Возвращаем результат в нужном формате (ровно 6 полей)
             return {
                 "type": "mp3",
                 "name": str(name),
@@ -368,9 +334,7 @@ class MetadataExtractor:
                 "path": file_path,
                 "cover": cover_path
             }
-
         except Exception as e:
-            # В случае ошибки возвращаем структуру с минимальной информацией
             return {
                 "type": "mp3",
                 "name": os.path.basename(file_path) if 'file_path' in locals() else "Unknown",
@@ -381,27 +345,19 @@ class MetadataExtractor:
                 "error": str(e)
             }
 
+    # ========== Извлечение метаданных из YouTube ==========
     def _extract_youtube(self, url: str) -> Dict[str, Any]:
-        """
-        Извлекает метаданные из YouTube видео.
-        Возвращает 6 полей: type, name, artist, duration, path, cover
-        И добавляет error если есть ошибка
-        """
         try:
             with yt_dlp.YoutubeDL(self.ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
-
-                # Проверяем, есть ли ошибка аутентификации
                 if not info:
                     raise Exception("Не удалось получить информацию о видео")
 
-                # Получаем длительность и конвертируем в формат MM:SS
                 duration_seconds = info.get('duration', 0)
                 if duration_seconds:
                     hours = int(duration_seconds // 3600)
                     minutes = int((duration_seconds % 3600) // 60)
                     seconds = int(duration_seconds % 60)
-
                     if hours > 0:
                         duration_formatted = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
                     else:
@@ -409,34 +365,26 @@ class MetadataExtractor:
                 else:
                     duration_formatted = "00:00"
 
-                # Получаем название
                 name = info.get('title', 'Unknown YouTube Video')
-                if len(name) > 100:  # Ограничиваем длину названия
+                if len(name) > 100:
                     name = name[:97] + "..."
 
-                # Получаем исполнителя/автора
                 artist = info.get('uploader', info.get('channel', 'Unknown Artist'))
-
-                # Получаем обложку
                 thumbnail = info.get('thumbnail')
                 cover_url = None
 
-                if isinstance(thumbnail, list) and len(thumbnail) > 0:
-                    # Берем самую качественную обложку (последнюю в списке)
+                if isinstance(thumbnail, list) and thumbnail:
                     cover_url = thumbnail[-1]
                 elif isinstance(thumbnail, str):
                     cover_url = thumbnail
 
-                # Скачиваем и сохраняем обложку
                 if cover_url and cover_url.startswith('http'):
                     cover_path = self._save_cover_from_url(cover_url, name, artist)
                 else:
                     cover_path = self.default_cover_path
 
-                # Для YouTube "path" - это исходная ссылка
                 path = info.get('webpage_url', url)
 
-                # Возвращаем только 6 полей
                 return {
                     "type": "youtube",
                     "name": str(name),
@@ -445,7 +393,6 @@ class MetadataExtractor:
                     "path": str(path),
                     "cover": cover_path
                 }
-
         except Exception as e:
             print(f"Ошибка при извлечении YouTube метаданных: {e}")
             return {
@@ -458,12 +405,8 @@ class MetadataExtractor:
                 "error": str(e)
             }
 
+    # ========== Извлечение метаданных из Spotify ==========
     def _extract_spotify(self, url: str) -> Dict[str, Any]:
-        """
-        Извлекает метаданные из Spotify трека только через официальный API.
-        Возвращает 6 полей: type, name, artist, duration, path, cover
-        И добавляет error если есть ошибка
-        """
         try:
             if not self.spotify_token:
                 if not self._get_spotify_token():
@@ -477,10 +420,8 @@ class MetadataExtractor:
                         "error": "Spotify API credentials not configured or failed to get token"
                     }
 
-            # Извлекаем ID трека из URL
             parsed_url = urlparse(url)
             path_parts = parsed_url.path.strip('/').split('/')
-
             if len(path_parts) < 2 or path_parts[0] != 'track':
                 return {
                     "type": "spotify",
@@ -492,18 +433,9 @@ class MetadataExtractor:
                     "error": "Invalid Spotify track URL"
                 }
 
-            track_id = path_parts[1].split('?')[0]  # Убираем параметры если есть
-
-            # Делаем запрос к Spotify API
-            headers = {
-                'Authorization': f'Bearer {self.spotify_token}',
-                'Accept': 'application/json',
-            }
-
-            response = requests.get(
-                f'https://api.spotify.com/v1/tracks/{track_id}',
-                headers=headers
-            )
+            track_id = path_parts[1].split('?')[0]
+            headers = {'Authorization': f'Bearer {self.spotify_token}'}
+            response = requests.get(f'https://api.spotify.com/v1/tracks/{track_id}', headers=headers)
 
             if response.status_code != 200:
                 return {
@@ -517,41 +449,28 @@ class MetadataExtractor:
                 }
 
             track_data = response.json()
-
-            # Извлекаем данные
             name = track_data.get('name', 'Unknown Track')
             duration_ms = track_data.get('duration_ms', 0)
             duration_seconds = duration_ms // 1000
-
-            # Конвертируем секунды в формат MM:SS
             minutes = int(duration_seconds // 60)
             seconds = int(duration_seconds % 60)
             duration_formatted = f"{minutes:02d}:{seconds:02d}"
 
-            # Извлекаем исполнителей
             artists = track_data.get('artists', [])
-            artist_names = [artist.get('name', '') for artist in artists]
+            artist_names = [a.get('name', '') for a in artists]
             artist = ', '.join(artist_names) if artist_names else 'Unknown Artist'
 
-            # Извлекаем обложку альбома
             album_images = track_data.get('album', {}).get('images', [])
             cover_url = None
-
             if album_images:
-                # Берем изображение среднего размера (300x300) или первое доступное
-                medium_image = next((img for img in album_images if img.get('height', 0) == 300), None)
-                if medium_image:
-                    cover_url = medium_image.get('url')
-                elif album_images:
-                    cover_url = album_images[0].get('url')
+                medium = next((img for img in album_images if img.get('height') == 300), None)
+                cover_url = (medium or album_images[0]).get('url')
 
-            # Скачиваем и сохраняем обложку
             if cover_url:
                 cover_path = self._save_cover_from_url(cover_url, name, artist)
             else:
                 cover_path = self.default_cover_path
 
-            # Возвращаем только 6 полей
             return {
                 "type": "spotify",
                 "name": str(name),
@@ -560,7 +479,6 @@ class MetadataExtractor:
                 "path": url,
                 "cover": cover_path
             }
-
         except Exception as e:
             return {
                 "type": "spotify",
@@ -572,13 +490,10 @@ class MetadataExtractor:
                 "error": str(e)
             }
 
-    def extract_metadata(
-            self,
-            source: str,
-            media_type: MediaType
-    ) -> Dict[str, Any]:
+    # ========== Основной метод для одного трека ==========
+    def extract_metadata(self, source: str, media_type: MediaType) -> Dict[str, Any]:
         if media_type == MediaType.MP3:
-            return self._extract_mp3(file_path=source)
+            return self._extract_mp3(source)
         elif media_type == MediaType.SPOTIFY:
             return self._extract_spotify(source)
         elif media_type == MediaType.YOUTUBE:
@@ -586,8 +501,160 @@ class MetadataExtractor:
         else:
             raise ValueError(f"unsupported media type: {media_type}")
 
-
     def save_metadata_to_json(self, metadata: Dict[str, Any], output_file: str):
         """Сохраняет метаданные в JSON файл с кириллицей"""
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
+
+    # ========== Методы для плейлистов (новые) ==========
+    def extract_youtube_playlist(self, url: str) -> List[Dict[str, Any]]:
+        """
+        Извлекает метаданные для всех видео в YouTube-плейлисте.
+        Возвращает список треков в формате, аналогичном extract_metadata.
+        """
+        tracks = []
+        ydl_opts_flat = self.ydl_opts.copy()
+        ydl_opts_flat['extract_flat'] = True
+        ydl_opts_flat['quiet'] = True
+
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts_flat) as ydl:
+                info = ydl.extract_info(url, download=False)
+                if not info:
+                    raise Exception("Не удалось получить информацию о плейлисте")
+
+                entries = info.get('entries', [])
+                for entry in entries:
+                    if not entry:
+                        continue
+                    video_url = entry.get('url') or entry.get('webpage_url')
+                    if not video_url and entry.get('id'):
+                        video_url = f"https://www.youtube.com/watch?v={entry['id']}"
+                    if not video_url:
+                        continue
+
+                    duration = entry.get('duration', 0)
+                    if duration:
+                        minutes = int(duration // 60)
+                        seconds = int(duration % 60)
+                        duration_formatted = f"{minutes:02d}:{seconds:02d}"
+                    else:
+                        duration_formatted = "00:00"
+
+                    title = entry.get('title', 'Unknown')
+                    if len(title) > 100:
+                        title = title[:97] + "..."
+
+                    artist = entry.get('uploader') or entry.get('channel') or 'Unknown Artist'
+
+                    thumbnails = entry.get('thumbnails', [])
+                    cover_url = None
+                    if thumbnails:
+                        cover_url = thumbnails[-1].get('url') if isinstance(thumbnails[-1], dict) else thumbnails[-1]
+                    if not cover_url:
+                        cover_url = entry.get('thumbnail')
+
+                    cover_path = self.default_cover_path
+                    if cover_url and cover_url.startswith('http'):
+                        cover_path = self._save_cover_from_url(cover_url, title, artist)
+
+                    track = {
+                        'type': 'youtube',
+                        'name': title,
+                        'artist': artist,
+                        'duration': duration_formatted,
+                        'path': video_url,
+                        'cover': cover_path
+                    }
+                    tracks.append(track)
+        except Exception as e:
+            print(f"Ошибка при извлечении YouTube-плейлиста: {e}")
+
+        return tracks
+
+    def extract_spotify_playlist(self, url: str) -> List[Dict[str, Any]]:
+        """
+        Извлекает метаданные для всех треков в Spotify-плейлисте.
+        Возвращает список треков в формате, аналогичном extract_metadata.
+        """
+        tracks = []
+
+        if not self.spotify_token:
+            if not self._get_spotify_token():
+                print("Не удалось получить токен Spotify API")
+                return tracks
+
+        parsed_url = urlparse(url)
+        path_parts = parsed_url.path.strip('/').split('/')
+        if len(path_parts) < 2 or path_parts[0] != 'playlist':
+            print("Некорректный URL плейлиста Spotify")
+            return tracks
+
+        playlist_id = path_parts[1].split('?')[0]
+
+        headers = {'Authorization': f'Bearer {self.spotify_token}'}
+        next_url = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50'
+
+        while next_url:
+            try:
+                response = requests.get(next_url, headers=headers)
+                if response.status_code != 200:
+                    print(f"Ошибка Spotify API: {response.status_code}")
+                    break
+
+                data = response.json()
+                items = data.get('items', [])
+
+                for item in items:
+                    track_data = item.get('track')
+                    if not track_data:
+                        continue
+
+                    name = track_data.get('name', 'Unknown Track')
+                    duration_ms = track_data.get('duration_ms', 0)
+                    duration_seconds = duration_ms // 1000
+                    minutes = duration_seconds // 60
+                    seconds = duration_seconds % 60
+                    duration_formatted = f"{minutes:02d}:{seconds:02d}"
+
+                    artists = track_data.get('artists', [])
+                    artist_names = [a.get('name', '') for a in artists]
+                    artist = ', '.join(artist_names) if artist_names else 'Unknown Artist'
+
+                    album_images = track_data.get('album', {}).get('images', [])
+                    cover_url = None
+                    if album_images:
+                        medium = next((img for img in album_images if img.get('height') == 300), None)
+                        cover_url = (medium or album_images[0]).get('url')
+
+                    cover_path = self.default_cover_path
+                    if cover_url:
+                        cover_path = self._save_cover_from_url(cover_url, name, artist)
+
+                    track = {
+                        'type': 'spotify',
+                        'name': name,
+                        'artist': artist,
+                        'duration': duration_formatted,
+                        'path': track_data.get('external_urls', {}).get('spotify', ''),
+                        'cover': cover_path
+                    }
+                    tracks.append(track)
+
+                next_url = data.get('next')
+            except Exception as e:
+                print(f"Ошибка при обработке Spotify-плейлиста: {e}")
+                break
+
+        return tracks
+
+    def extract_playlist(self, url: str, media_type: MediaType) -> List[Dict[str, Any]]:
+        """
+        Универсальный метод для извлечения плейлиста по его типу.
+        """
+        if media_type == MediaType.YOUTUBE_PLAYLIST:
+            return self.extract_youtube_playlist(url)
+        elif media_type == MediaType.SPOTIFY_PLAYLIST:
+            return self.extract_spotify_playlist(url)
+        else:
+            raise ValueError(f"Неподдерживаемый тип плейлиста: {media_type}")

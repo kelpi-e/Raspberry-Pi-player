@@ -239,3 +239,6 @@ django_cache/
 # !migrations/.gitkeep  # раскомментируйте для пустой папки миграций
 # !media/.gitkeep       # раскомментируйте для пустой медиа папки
 # !static/.gitkeep      # раскомментируйте для пустой статики
+
+data/
+downloaded_covers/

@@ -116,6 +116,24 @@ def playlist_add_track(request, playlist_id):
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({'error': 'Unsupported URL'}, status=400)
             return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
+        # Плейлист YouTube или Spotify — извлекаем все треки и добавляем по одному
+        if media_type in (MediaType.YOUTUBE_PLAYLIST, MediaType.SPOTIFY_PLAYLIST):
+            tracks = services.extract_playlist_metadata(url, media_type)
+            if not tracks:
+                err = 'Не удалось загрузить плейлист или в нём нет треков'
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'error': err}, status=400)
+                from django.urls import reverse
+                from urllib.parse import urlencode
+                return redirect(reverse('playlists:playlist_edit', kwargs={'playlist_id': playlist_id}) + '?' + urlencode({'add_error': err}))
+            for track in tracks:
+                services.add_track_to_playlist(playlist_id, track)
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                pl2 = services.load_playlist(playlist_id)
+                return JsonResponse({'ok': True, 'tracks': pl2['tracks'], 'added': len(tracks)})
+            return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
         track = services.extract_metadata(url, media_type, uploaded_file=None)
     elif mp3_file and mp3_file.name.lower().endswith('.mp3'):
         track = services.extract_metadata(None, MediaType.MP3, uploaded_file=mp3_file)
@@ -140,6 +158,51 @@ def playlist_add_track(request, playlist_id):
         return JsonResponse({'ok': True, 'tracks': pl2['tracks']})
     return redirect('playlists:playlist_edit', playlist_id=playlist_id)
 
+
+@require_http_methods(['POST'])
+def playlist_add_playlist(request, playlist_id):
+    """
+    Add all tracks from a YouTube/Spotify playlist URL to the playlist.
+    """
+    pl = services.load_playlist(playlist_id)
+    if not pl:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Playlist not found'}, status=404)
+        return redirect('playlists:index')
+
+    url = (request.POST.get('playlist_url') or '').strip()
+    if not url:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'No playlist URL provided'}, status=400)
+        return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
+    media_type = services.detect_media_type(url)
+    if media_type not in (MediaType.YOUTUBE_PLAYLIST, MediaType.SPOTIFY_PLAYLIST):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Unsupported playlist type'}, status=400)
+        return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
+    try:
+        tracks = services.extract_playlist_metadata(url, media_type)
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': str(e)}, status=500)
+        return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
+    if not tracks:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'No tracks found in playlist'}, status=400)
+        return redirect('playlists:playlist_edit', playlist_id=playlist_id)
+
+    # Добавляем все треки
+    for track in tracks:
+        services.add_track_to_playlist(playlist_id, track)
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        pl2 = services.load_playlist(playlist_id)
+        return JsonResponse({'ok': True, 'tracks': pl2['tracks']})
+
+    return redirect('playlists:playlist_edit', playlist_id=playlist_id)
 
 @require_http_methods(['POST'])
 def playlist_remove_track(request, playlist_id):
@@ -206,6 +269,11 @@ def api_extract_metadata(request):
         media_type = services.detect_media_type(url)
         if not media_type:
             return JsonResponse({'error': 'Unsupported URL'}, status=400)
+        if media_type in (MediaType.YOUTUBE_PLAYLIST, MediaType.SPOTIFY_PLAYLIST):
+            return JsonResponse({
+                'playlist': True,
+                'message': 'Используйте форму добавления трека на странице плейлиста — все треки плейлиста будут добавлены.',
+            })
         track = services.extract_metadata(url, media_type, uploaded_file=None)
     elif mp3_file and mp3_file.name.lower().endswith('.mp3'):
         track = services.extract_metadata(None, MediaType.MP3, uploaded_file=mp3_file)

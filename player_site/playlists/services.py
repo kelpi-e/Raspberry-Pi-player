@@ -125,17 +125,32 @@ def delete_playlist(playlist_id):
 
 
 def detect_media_type(source):
-    """Return MediaType from URL or 'mp3' for file path."""
+    """
+    Return MediaType from URL or 'mp3' for file path.
+    Now also detects YouTube/Spotify playlists.
+    """
     s = (source or '').strip()
     if not s:
         return None
     s_lower = s.lower()
-    if 'spotify.com' in s_lower and '/track/' in s_lower:
-        return MediaType.SPOTIFY
-    if 'youtube.com' in s_lower or 'youtu.be' in s_lower:
+
+    # YouTube playlist
+    if ('youtube.com/playlist' in s_lower or 'youtu.be/playlist' in s_lower) and 'list=' in s_lower:
+        return MediaType.YOUTUBE_PLAYLIST  # предположим, что такое значение добавлено в MediaTypes
+    # Spotify playlist
+    if 'open.spotify.com/playlist' in s_lower:
+        return MediaType.SPOTIFY_PLAYLIST  # аналогично
+
+    # YouTube video
+    if 'youtube.com/watch' in s_lower or 'youtu.be/' in s_lower:
         return MediaType.YOUTUBE
+    # Spotify track
+    if 'spotify.com/track' in s_lower:
+        return MediaType.SPOTIFY
+    # MP3 file
     if s.endswith('.mp3') or (len(s) < 400 and Path(s).suffix.lower() == '.mp3'):
         return MediaType.MP3
+
     return None
 
 
@@ -186,6 +201,20 @@ def extract_metadata(source, media_type, uploaded_file=None):
         _normalize_cover_to_relative(meta)
         return meta
     return {'type': 'unknown', 'name': '', 'artist': '', 'duration': '00:00', 'path': source, 'cover': '', 'error': 'Unsupported source'}
+
+
+def extract_playlist_metadata(source, media_type):
+    """
+    Extract a list of tracks from a playlist URL (YouTube or Spotify).
+    Returns list of track dicts (same format as extract_metadata: type, name, artist, duration, path, cover).
+    """
+    if media_type not in (MediaType.YOUTUBE_PLAYLIST, MediaType.SPOTIFY_PLAYLIST):
+        return []
+    extractor = _get_extractor()
+    tracks = extractor.extract_playlist(source, media_type)
+    for track in tracks:
+        _normalize_cover_to_relative(track)
+    return tracks
 
 
 def _normalize_cover_to_relative(meta):
