@@ -29,6 +29,7 @@ add_executable(Raspberry-Pi-player
         res/utils/MarqueeController.cpp
         res/utils/godSays.cpp
         res/utils/FullscreenMessage.cpp
+        res/utils/ThemeLoader.cpp
 
         res/ui/PlayerWindow.ui
         res/ui/PlaylistWindow.ui

@@ -1,4 +1,5 @@
 #include "PlayerWindow.h"
+#include "../utils/ThemeLoader.h"
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QMediaMetaData>
@@ -13,6 +14,7 @@ PlayerWindow::PlayerWindow(QWidget *parent, PlayerAudio *audio)
 {
 
     ui.setupUi(this);
+    ThemeLoader::applyPlayerWindow(this);
     setWindowFlags(Qt::FramelessWindowHint);
     setFixedSize(WIDTH, HEIGHT);
 

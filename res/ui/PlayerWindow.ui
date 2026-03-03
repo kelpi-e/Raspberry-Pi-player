@@ -86,9 +86,9 @@
 
         <layout class="QVBoxLayout" name="vLay">
             <property name="spacing"><number>8</number></property>
-            <property name="leftMargin"><number>10</number></property>
+            <property name="leftMargin"><number>4</number></property>
             <property name="topMargin"><number>3</number></property>
-            <property name="rightMargin"><number>10</number></property>
+            <property name="rightMargin"><number>4</number></property>
             <property name="bottomMargin"><number>10</number></property>
 
             <!-- ================= СТРОКА СТАТУСА ================= -->

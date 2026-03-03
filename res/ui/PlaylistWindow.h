@@ -21,7 +21,8 @@ public:
     ~PlaylistWindow();
 
     void setPlaylist(const QList<TrackInfo>& tracks,
-                     const QString& name);
+                     const QString& name,
+                     bool showCovers = true);
 
 signals:
     void requestBack();
@@ -44,6 +45,7 @@ private:
     QList<Item> items;
     QList<TrackInfo> allTracks;
     int startIndex = 0;
+    bool showCovers = true;
 
     void createItems();
     void updateView();

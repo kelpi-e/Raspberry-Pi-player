@@ -109,7 +109,7 @@ void PlaylistScene::showPlaylistsList()
         rows.append(info);
     }
 
-    wnd->setPlaylist(rows, QStringLiteral("Плейлисты"));
+    wnd->setPlaylist(rows, QStringLiteral("Плейлисты"), false);
 }
 
 void PlaylistScene::openPlaylistByIndex(const int index)
@@ -167,5 +167,5 @@ void PlaylistScene::openPlaylistByIndex(const int index)
     }
 
     currentMode = Mode::TracksView;
-    wnd->setPlaylist(tracks, pl.name);
+    wnd->setPlaylist(tracks, pl.name, true);
 }
