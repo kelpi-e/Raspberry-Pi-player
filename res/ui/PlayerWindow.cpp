@@ -173,24 +173,50 @@ void PlayerWindow::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
 
-    // ширина, ограниченная шириной названия трека
-    int maxW = ui.lblTitle->width();
+    int w = this->width();
+    int h = this->height();
 
-    // оставшееся место по вертикали после статуса, названия, артиста, прогресса и кнопок
+    // ---- Квадратная обложка ----
+    int maxW = ui.lblTitle->width(); // ограничение по ширине названия
     int usedH = ui.hLayStatus->sizeHint().height()
               + ui.lblTitle->sizeHint().height()
               + ui.lblArtist->sizeHint().height()
               + ui.hLayProgress->sizeHint().height()
               + ui.hLayButtons->sizeHint().height()
-              + 8*5; // суммарные отступы и spacing (примерно)
+              + 8*5; // суммарные spacing и отступы
 
-    int maxH = qMax(0, this->height() - usedH);
-
-    // сторона квадрата = минимальная из доступной ширины и высоты
+    int maxH = qMax(0, h - usedH);
     int side = qMin(maxW, maxH);
 
     ui.lblCover->setFixedWidth(side);
     ui.lblCover->setFixedHeight(side);
-
     updateCover();
+
+    // ---- Масштабирование шрифтов ----
+    // Базовое окно: WIDTH=240, HEIGHT=320
+    float scaleFactor = h / 320.0f;
+
+    QFont titleFont = ui.lblTitle->font();
+    titleFont.setPointSizeF(14 * scaleFactor);
+    ui.lblTitle->setFont(titleFont);
+
+    QFont artistFont = ui.lblArtist->font();
+    artistFont.setPointSizeF(12 * scaleFactor);
+    ui.lblArtist->setFont(artistFont);
+
+    QFont timeFont = ui.lblTime->font();
+    timeFont.setPointSizeF(12 * scaleFactor);
+    ui.lblTime->setFont(timeFont);
+
+    QFont batteryFont = ui.lblBattery->font();
+    batteryFont.setPointSizeF(12 * scaleFactor);
+    ui.lblBattery->setFont(batteryFont);
+
+    // Кнопки можно масштабировать, если нужно
+    QList<QPushButton*> buttons = { ui.btnPlay, ui.btnPrev, ui.btnNext, ui.btnLoop, ui.btnShuffle, ui.btnMenu };
+    for (auto btn : buttons) {
+        QFont f = btn->font();
+        f.setPointSizeF(9 * scaleFactor); // базовый размер 9
+        btn->setFont(f);
+    }
 }
