@@ -191,19 +191,35 @@
 
             <!-- ОБЛОЖКА -->
             <item>
-                <layout class="QHBoxLayout" name="hLayCover">
-                    <property name="alignment"><set>Qt::AlignHCenter</set></property>
+                <layout class="QVBoxLayout" name="vLayCover">
+                    <property name="alignment">
+                        <set>Qt::AlignHCenter</set>
+                    </property>
+
                     <item>
                         <widget class="QLabel" name="lblCover">
+                            <property name="sizePolicy">
+                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding"/>
+                            </property>
+
                             <property name="minimumSize">
-                                <size><width>170</width><height>170</height></size>
+                                <size>
+                                    <width>0</width>
+                                    <height>0</height>
+                                </size>
                             </property>
-                            <property name="maximumSize">
-                                <size><width>170</width><height>170</height></size>
+
+                            <property name="alignment">
+                                <set>Qt::AlignCenter</set>
                             </property>
-                            <property name="alignment"><set>Qt::AlignCenter</set></property>
-                            <property name="scaledContents"><bool>true</bool></property>
-                            <property name="text"><string>Обложка</string></property>
+
+                            <property name="scaledContents">
+                                <bool>true</bool>
+                            </property>
+
+                            <property name="text">
+                                <string>Обложка</string>
+                            </property>
                         </widget>
                     </item>
                 </layout>
