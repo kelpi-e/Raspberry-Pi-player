@@ -1,5 +1,7 @@
 #include "PlayerScene.h"
+#include "../audio/mediafactory.h"
 #include <QCoreApplication>
+#include <QLatin1String>
 #include <QMainWindow>
 
 #include "PlaylistScene.h"
@@ -40,6 +42,13 @@ PlayerScene::PlayerScene(const qreal rot, QObject* parent)
         view.setScene(&scene);
     });
 
+    connect(playlistScene, &PlaylistScene::requestPlayTrack, this, [this](const QString& path, const QString& typeStr) {
+        MediaType mt = MediaType::Mp3;
+        if (typeStr == QLatin1String("youtube")) mt = MediaType::Youtube;
+        else if (typeStr == QLatin1String("spotify")) mt = MediaType::Spotify;
+        audio.play(mt, path);
+        view.setScene(&scene);
+    });
 }
 
 

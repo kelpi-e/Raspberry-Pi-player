@@ -84,7 +84,7 @@
 
             <!-- HEADER -->
             <item>
-                <layout class="QHBoxLayout">
+                <layout class="QHBoxLayout" name="headerLayout">
                     <property name="spacing"><number>6</number></property>
 
                     <item>

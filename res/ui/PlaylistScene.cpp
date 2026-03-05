@@ -4,10 +4,13 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QLatin1String>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDebug>
+#include <algorithm>
+#include <random>
 
 PlaylistScene::PlaylistScene(qreal rot, QObject* parent)
     : QObject(parent)
@@ -21,6 +24,10 @@ PlaylistScene::PlaylistScene(qreal rot, QObject* parent)
             this, &PlaylistScene::handleBackRequested);
     connect(wnd, &PlaylistWindow::itemClicked,
             this, &PlaylistScene::handleItemClicked);
+    connect(wnd, &PlaylistWindow::requestShuffleToggle,
+            this, &PlaylistScene::handleShuffleToggle);
+    connect(wnd, &PlaylistWindow::requestPlayPlaylist,
+            this, &PlaylistScene::handlePlayPlaylist);
 
     loadPlaylistsFromDisk();
     showPlaylistsList();
@@ -41,7 +48,18 @@ void PlaylistScene::handleItemClicked(const int index)
     if (currentMode == Mode::PlaylistsList) {
         openPlaylistByIndex(index);
     } else {
-        // In track view we do nothing on click for now
+        if (index >= 0 && index < currentTracks.size()) {
+            const TrackInfo& t = currentTracks.at(index);
+            QString path = t.path;
+            if (path.isEmpty()) return;
+            if (t.type == QLatin1String("mp3") && !path.contains(QLatin1Char(':')) && !path.startsWith(QLatin1Char('/'))) {
+                QDir dir(QCoreApplication::applicationDirPath());
+                dir.cdUp();
+                dir.cdUp();
+                path = dir.absoluteFilePath(QStringLiteral("web-interface/data/mp3/") + path);
+            }
+            emit requestPlayTrack(path, t.type);
+        }
     }
 }
 
@@ -52,6 +70,19 @@ void PlaylistScene::handleBackRequested()
     } else {
         emit requestBack();
     }
+}
+
+void PlaylistScene::handleShuffleToggle()
+{
+    if (currentMode != Mode::TracksView || currentTracks.isEmpty()) return;
+    std::shuffle(currentTracks.begin(), currentTracks.end(), std::mt19937(std::random_device{}()));
+    wnd->setPlaylist(currentTracks, currentPlaylistName, true);
+}
+
+void PlaylistScene::handlePlayPlaylist()
+{
+    if (currentMode != Mode::TracksView || currentTracks.isEmpty()) return;
+    handleItemClicked(0);
 }
 
 void PlaylistScene::loadPlaylistsFromDisk()
@@ -109,6 +140,8 @@ void PlaylistScene::showPlaylistsList()
         rows.append(info);
     }
 
+    currentTracks.clear();
+    currentPlaylistName.clear();
     wnd->setPlaylist(rows, QStringLiteral("Плейлисты"), false);
 }
 
@@ -163,9 +196,13 @@ void PlaylistScene::openPlaylistByIndex(const int index)
             info.meta = duration;
         }
         info.coverPath = t.value(QStringLiteral("cover")).toString();
+        info.path = t.value(QStringLiteral("path")).toString();
+        info.type = t.value(QStringLiteral("type")).toString(QStringLiteral("mp3"));
         tracks.append(info);
     }
 
     currentMode = Mode::TracksView;
+    currentTracks = tracks;
+    currentPlaylistName = pl.name;
     wnd->setPlaylist(tracks, pl.name, true);
 }

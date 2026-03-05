@@ -7,7 +7,6 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QSizePolicy>
-#include <QColor>
 #include <QDir>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -27,11 +26,13 @@ PlaylistWindow::PlaylistWindow(QWidget* parent)
     connect(ui.btnDown, &QPushButton::clicked,
             this, &PlaylistWindow::scrollDown);
 
-    createItems();
+    visibleRows = (HEIGHT - 4 - 4 - 36 - 4 - 28 - 4) / 52;
+    if (visibleRows < 1) visibleRows = 1;
+    createItems(visibleRows);
 
     // Ограничение по ширине 240: контент 236px (отступы 2+2)
     const int contentW = WIDTH - 4;
-    ui.lblPlaylistTitle->setMaximumWidth(contentW - 36 - 6);
+    ui.lblPlaylistTitle->setMaximumWidth(contentW - 36 - 6 - 28 - 28 - 8);
     ui.lblPlaylistTitle->setSizePolicy(QSizePolicy::Expanding, ui.lblPlaylistTitle->sizePolicy().verticalPolicy());
     for (Item& it : items) {
         it.box->setMaximumWidth(contentW);
@@ -42,6 +43,32 @@ PlaylistWindow::PlaylistWindow(QWidget* parent)
     const int navBtnW = (contentW - 4) / 2;
     ui.btnUp->setFixedSize(navBtnW, 28);
     ui.btnDown->setFixedSize(navBtnW, 28);
+
+    QHBoxLayout* headerLayout = findChild<QHBoxLayout*>(QStringLiteral("headerLayout"));
+    if (headerLayout) {
+        btnShuffle = new QPushButton(this);
+        btnShuffle->setFlat(true);
+        btnShuffle->setFixedSize(28, 28);
+        btnShuffle->setIcon(QIcon(QStringLiteral(":/res/ui/icons/shuffle.svg")));
+        btnShuffle->setIconSize(QSize(20, 20));
+        btnShuffle->setCursor(Qt::PointingHandCursor);
+        btnShuffle->setVisible(false);
+        connect(btnShuffle, &QPushButton::clicked, this, [this]() {
+            shuffleEnabled = !shuffleEnabled;
+            btnShuffle->setIcon(QIcon(shuffleEnabled ? QStringLiteral(":/res/ui/icons/shuffleenabled.svg") : QStringLiteral(":/res/ui/icons/shuffle.svg")));
+            emit requestShuffleToggle();
+        });
+        btnPlay = new QPushButton(this);
+        btnPlay->setFlat(true);
+        btnPlay->setFixedSize(28, 28);
+        btnPlay->setIcon(QIcon(QStringLiteral(":/res/ui/icons/play.svg")));
+        btnPlay->setIconSize(QSize(20, 20));
+        btnPlay->setCursor(Qt::PointingHandCursor);
+        btnPlay->setVisible(false);
+        connect(btnPlay, &QPushButton::clicked, this, [this]() { emit requestPlayPlaylist(); });
+        headerLayout->addWidget(btnShuffle);
+        headerLayout->addWidget(btnPlay);
+    }
 }
 
 PlaylistWindow::~PlaylistWindow()
@@ -49,9 +76,9 @@ PlaylistWindow::~PlaylistWindow()
     // MarqueeController удалится автоматически, т.к. родитель - QLabel
 }
 
-void PlaylistWindow::createItems()
+void PlaylistWindow::createItems(int rowCount)
 {
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < rowCount; ++i) {
         Item it;
         // Use a flat button as a clickable row container
         auto* btn = new QPushButton;
@@ -126,25 +153,22 @@ void PlaylistWindow::setPlaylist(const QList<TrackInfo>& tracks,
     startIndex = 0;
     showCovers = showCoversMode;
     ui.lblPlaylistTitle->setText(name);
+    if (btnShuffle) btnShuffle->setVisible(showCoversMode);
+    if (btnPlay) btnPlay->setVisible(showCoversMode);
     updateView();
 }
 
 QPixmap PlaylistWindow::loadCover(const QString& coverPath)
 {
     constexpr int coverSize = 44;
-    const QColor letterboxColor(0x1e, 0x1e, 0x1e);
 
-    const auto scaleToCover = [letterboxColor](QPixmap pixmap) -> QPixmap {
+    const auto scaleToCover = [](QPixmap pixmap) -> QPixmap {
         if (pixmap.isNull()) return QPixmap();
-        QPixmap scaled = pixmap.scaled(coverSize, coverSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QPixmap scaled = pixmap.scaled(coverSize, coverSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
         if (scaled.width() == coverSize && scaled.height() == coverSize) return scaled;
-        QPixmap square(coverSize, coverSize);
-        square.fill(letterboxColor);
-        QPainter painter(&square);
-        painter.setRenderHint(QPainter::SmoothPixmapTransform);
-        painter.drawPixmap((coverSize - scaled.width()) / 2, (coverSize - scaled.height()) / 2, scaled);
-        painter.end();
-        return square;
+        int x = (scaled.width() - coverSize) / 2;
+        int y = (scaled.height() - coverSize) / 2;
+        return scaled.copy(x, y, coverSize, coverSize);
     };
 
     const auto defaultPixmap = [&scaleToCover]() -> QPixmap {
@@ -211,7 +235,6 @@ void PlaylistWindow::updateView()
             items[i].metaMarquee->setText(allTracks[idx].meta);
 
             if (showCovers) {
-                // Для треков: обложка из downloaded_covers или default.svg при отсутствии
                 items[i].cover->setPixmap(loadCover(allTracks[idx].coverPath));
                 items[i].cover->setVisible(true);
             }
@@ -223,16 +246,22 @@ void PlaylistWindow::updateView()
 
 void PlaylistWindow::scrollUp()
 {
+    if (allTracks.isEmpty()) return;
     if (startIndex > 0) {
         startIndex--;
-        updateView();
+    } else {
+        startIndex = qMax(0, allTracks.size() - visibleRows);
     }
+    updateView();
 }
 
 void PlaylistWindow::scrollDown()
 {
-    if (startIndex + 3 < allTracks.size()) {
+    if (allTracks.isEmpty()) return;
+    if (startIndex + visibleRows < allTracks.size()) {
         startIndex++;
-        updateView();
+    } else {
+        startIndex = 0;
     }
+    updateView();
 }

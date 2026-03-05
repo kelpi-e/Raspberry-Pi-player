@@ -21,10 +21,13 @@ public:
 
 signals:
     void requestBack();
+    void requestPlayTrack(const QString& path, const QString& type);
 
 private slots:
     void handleItemClicked(int index);
     void handleBackRequested();
+    void handleShuffleToggle();
+    void handlePlayPlaylist();
 
 private:
     QGraphicsScene sc;
@@ -38,6 +41,8 @@ private:
 
     Mode currentMode = Mode::PlaylistsList;
     QList<PlaylistInfo> playlists;
+    QList<TrackInfo> currentTracks;
+    QString currentPlaylistName;
 
     void loadPlaylistsFromDisk();
     void showPlaylistsList();

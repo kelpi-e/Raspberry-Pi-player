@@ -11,6 +11,8 @@ struct TrackInfo {
     QString title;
     QString meta;
     QString coverPath;
+    QString path;
+    QString type;  // "mp3", "youtube", "spotify"
 };
 
 class PlaylistWindow : public QWidget
@@ -26,8 +28,9 @@ public:
 
 signals:
     void requestBack();
-    // Emitted when a visible row is clicked: index in the current list
     void itemClicked(int index);
+    void requestShuffleToggle();
+    void requestPlayPlaylist();
 
 private:
     Ui::PlaylistWindow ui;
@@ -45,9 +48,13 @@ private:
     QList<Item> items;
     QList<TrackInfo> allTracks;
     int startIndex = 0;
+    int visibleRows = 4;
     bool showCovers = true;
+    QPushButton* btnShuffle = nullptr;
+    QPushButton* btnPlay = nullptr;
+    bool shuffleEnabled = false;
 
-    void createItems();
+    void createItems(int rowCount);
     void updateView();
     QPixmap loadCover(const QString& coverPath);
 
