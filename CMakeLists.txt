@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Raspberry-Pi-player)
 
 set(CMAKE_CXX_STANDARD 20)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
@@ -10,12 +11,15 @@ find_package(Qt6 REQUIRED COMPONENTS
         Core
         Widgets
         Multimedia
+        Svg
 )
-find_package(TagLib REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(TAGLIB REQUIRED taglib)
 
 add_executable(Raspberry-Pi-player
         res/main.cpp
-        res/resources.qrc  # Добавить здесь
+        res/resources.qrc
 
         res/ui/PlayerWindow.cpp
         res/ui/PlayerScene.cpp
@@ -35,15 +39,16 @@ add_executable(Raspberry-Pi-player
         res/ui/PlaylistWindow.ui
 )
 
-# Убрать qt_add_resources - теперь это делает AUTORCC
-
 target_include_directories(Raspberry-Pi-player
-        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+        PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${TAGLIB_INCLUDE_DIRS}
 )
 
 target_link_libraries(Raspberry-Pi-player
         Qt6::Core
         Qt6::Widgets
         Qt6::Multimedia
-        TagLib::TagLib
+        Qt6::Svg
+        ${TAGLIB_LIBRARIES}
 )

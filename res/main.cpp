@@ -16,12 +16,14 @@ int main(int argc, char *argv[]) {
         bool ok = false;
         rotation = QString::fromLatin1(argv[1]).toDouble(&ok);
         if (!ok) {
-            qFatal() << "[FATAL] Invalid rotation argument must be float or integer";
+            //qFatal() << "[FATAL] Invalid rotation argument must be float or integer";
+            qFatal("[FATAL] Invalid rotation argument must be float or integer");
             return 1;
         }
     }
     else {
-        qFatal() << "[FATAL] Too many arguments";
+        //qFatal() << "[FATAL] Too many arguments";
+        qFatal("[FATAL] Too many arguments");
         return 1;
     }
     ROTATION = rotation;

@@ -177,16 +177,30 @@ void PlayerWindow::resizeEvent(QResizeEvent *event)
     int h = this->height();
 
     // ---- Квадратная обложка ----
-    int maxW = ui.lblTitle->width(); // ограничение по ширине названия
-    int usedH = ui.hLayStatus->sizeHint().height()
-              + ui.lblTitle->sizeHint().height()
-              + ui.lblArtist->sizeHint().height()
-              + ui.hLayProgress->sizeHint().height()
-              + ui.hLayButtons->sizeHint().height()
-              + 8*5; // суммарные spacing и отступы
+    // Используем реальные высоты виджетов; если layout ещё не
+    // реализован — sizeHint() возвращает 0, поэтому берём max(actual, hint).
+    auto safeH = [](QWidget* w) {
+        return qMax(w->height(), w->sizeHint().height());
+    };
+    auto safeHL = [](QLayout* l) {
+        return qMax(l->geometry().height(), l->sizeHint().height());
+    };
+
+    int usedH = safeHL(ui.hLayStatus)
+              + safeH(ui.lblTitle)
+              + safeH(ui.lblArtist)
+              + safeHL(ui.hLayProgress)
+              + safeHL(ui.hLayButtons)
+              + ui.vLay->spacing() * 5
+              + ui.vLay->contentsMargins().top()
+              + ui.vLay->contentsMargins().bottom();
 
     int maxH = qMax(0, h - usedH);
+    int maxW = w - ui.vLay->contentsMargins().left() - ui.vLay->contentsMargins().right();
     int side = qMin(maxW, maxH);
+    // Страховочный cap: обложка не должна занимать больше 60% высоты окна
+    side = qMin(side, (int)(h * 0.60f));
+    side = qMax(0, side);
 
     ui.lblCover->setFixedWidth(side);
     ui.lblCover->setFixedHeight(side);

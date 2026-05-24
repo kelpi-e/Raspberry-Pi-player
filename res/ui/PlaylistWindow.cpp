@@ -30,6 +30,11 @@ PlaylistWindow::PlaylistWindow(QWidget* parent)
     if (visibleRows < 1) visibleRows = 1;
     createItems(visibleRows);
 
+    // Ограничиваем высоту контейнера треков, чтобы плитки не вылезали
+    const int tracksMaxH = visibleRows * 52 + qMax(0, visibleRows - 1) * 8;
+    ui.tracksContainer->setMaximumHeight(tracksMaxH);
+    ui.tracksContainer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     // Ограничение по ширине 240: контент 236px (отступы 2+2)
     const int contentW = WIDTH - 4;
     ui.lblPlaylistTitle->setMaximumWidth(contentW - 36 - 6 - 28 - 28 - 8);
@@ -109,8 +114,10 @@ void PlaylistWindow::createItems(int rowCount)
         it.coverWrapper->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         auto* coverLayout = new QVBoxLayout(it.coverWrapper);
         coverLayout->setContentsMargins(0, 0, 0, 0);
-        coverLayout->setAlignment(Qt::AlignVCenter);
+        coverLayout->setSpacing(0);
+        coverLayout->addStretch();
         coverLayout->addWidget(it.cover);
+        coverLayout->addStretch();
 
         auto* v = new QVBoxLayout;
         v->setContentsMargins(0, 0, 0, 0);

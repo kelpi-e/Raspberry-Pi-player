@@ -214,11 +214,11 @@
                             </property>
 
                             <property name="scaledContents">
-                                <bool>true</bool>
+                                <bool>false</bool>
                             </property>
 
                             <property name="text">
-                                <string>Обложка</string>
+                                <string></string>
                             </property>
                         </widget>
                     </item>
