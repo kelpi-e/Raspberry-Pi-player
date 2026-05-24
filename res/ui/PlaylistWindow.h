@@ -37,7 +37,6 @@ private:
 
     struct Item {
         QWidget* box{};
-        QWidget* coverWrapper{};  // Сохраняем обёртку для правильного удаления
         QLabel* cover{};
         QLabel* title{};
         QLabel* meta{};

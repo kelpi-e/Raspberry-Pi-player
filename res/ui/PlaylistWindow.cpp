@@ -100,7 +100,7 @@ void PlaylistWindow::createItems(int rowCount)
         h->setContentsMargins(4, 0, 4, 0);
         h->setSpacing(8);
 
-        // Обложка трека: строго 44x44 внутри панели 52px (без переполнения)
+        // Обложка трека: строго 44x44, фон только на самой метке
         const int coverSz = 44;
         it.cover = new QLabel;
         it.cover->setObjectName(QStringLiteral("cover"));
@@ -108,16 +108,10 @@ void PlaylistWindow::createItems(int rowCount)
         it.cover->setScaledContents(false);
         it.cover->setAlignment(Qt::AlignCenter);
         it.cover->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        it.coverWrapper = new QWidget;
-        it.coverWrapper->setFixedSize(coverSz, 52);
-        it.coverWrapper->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        auto* coverLayout = new QVBoxLayout(it.coverWrapper);
-        coverLayout->setContentsMargins(0, 0, 0, 0);
-        coverLayout->setSpacing(0);
-        coverLayout->addStretch();
-        coverLayout->addWidget(it.cover);
-        coverLayout->addStretch();
+        it.cover->setStyleSheet(
+            QStringLiteral("background-color:#1e1e1e;"
+                           "border:1px solid #2a2a2a;"
+                           "border-radius:6px;"));
 
         auto* v = new QVBoxLayout;
         v->setContentsMargins(0, 0, 0, 0);
@@ -137,7 +131,7 @@ void PlaylistWindow::createItems(int rowCount)
         v->addWidget(it.title);
         v->addWidget(it.meta);
 
-        h->addWidget(it.coverWrapper);
+        h->addWidget(it.cover, 0, Qt::AlignVCenter);
         h->addLayout(v);
 
         ui.vLayTracks->addWidget(it.box);
@@ -235,7 +229,7 @@ void PlaylistWindow::updateView()
         int idx = startIndex + i;
         if (idx < allTracks.size()) {
             items[i].box->setVisible(true);
-            items[i].coverWrapper->setVisible(showCovers);
+            items[i].cover->setVisible(showCovers);
 
             // Устанавливаем текст через бегущие строки (название и мета — всегда)
             items[i].titleMarquee->setText(allTracks[idx].title);
@@ -243,7 +237,6 @@ void PlaylistWindow::updateView()
 
             if (showCovers) {
                 items[i].cover->setPixmap(loadCover(allTracks[idx].coverPath));
-                items[i].cover->setVisible(true);
             }
         } else {
             items[i].box->setVisible(false);
